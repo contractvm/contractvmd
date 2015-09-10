@@ -1,0 +1,167 @@
+from pycoin import networks
+from colorlog import ColoredFormatter
+import logging
+import os
+import platform
+import sys
+
+def app_data_path (appauthor, appname, roaming=True):
+	if sys.platform.startswith('java'):
+		os_name = platform.java_ver()[3][0]
+		if os_name.startswith('Windows'): # "Windows XP", "Windows 7", etc.
+			system = 'win32'
+		elif os_name.startswith('Mac'): # "Mac OS X", etc.
+			system = 'darwin'
+		else: # "Linux", "SunOS", "FreeBSD", etc.
+			system = 'linux2'
+	else:
+		system = sys.platform
+
+	if system == "win32":
+		if appauthor is None:
+			appauthor = appname
+		const = roaming and "CSIDL_APPDATA" or "CSIDL_LOCAL_APPDATA"
+		path = os.path.normpath(_get_win_folder(const))
+		if appname:
+			if appauthor is not False:
+				path = os.path.join(path, appauthor, appname)
+			else:
+				path = os.path.join(path, appname)
+	elif system == 'darwin':
+		path = os.path.expanduser('~/Library/Application Support/')
+		if appname:
+			path = os.path.join(path, appname)
+	else:
+		path = os.getenv('XDG_DATA_HOME', os.path.expanduser("~/"))
+		if appname:
+			path = os.path.join(path, '.'+appname)
+	return path
+
+
+VERBOSE = 5
+APP_VERSION = '0.1'
+APP_NAME = 'contractvm'
+APP_AUTHOR = 'Davide Gessa'
+DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)
+TEMP_DIR_RELATIVE = '/temp/'
+TEMP_DIR = DATA_DIR + TEMP_DIR_RELATIVE
+
+
+BACKEND_PROTOCOLS = ['rpc', 'chainsoapi']
+PLUGINS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
+
+CHAINS = {
+		'XTN' : {
+			'code': 'XTN',
+			'base_fee': 60000,
+			'genesis_block': "",
+			'genesis_height': 329600,
+			'name': networks.full_network_name_for_netcode ('XTN')
+		},
+		'BTC' : {
+			'code': 'BTC',
+			'base_fee': 40000,
+			'genesis_block': "",
+			'genesis_height': 329203,
+			'name': networks.full_network_name_for_netcode ('BTC')
+		},
+		'XLT' : {
+			'code': 'XLT',
+			'base_fee': 450000,
+			'genesis_block': "",
+			'genesis_height': 593598,
+			'name': networks.full_network_name_for_netcode ('XLT')
+		},
+		'LTC' : {
+			'code': 'LTC',
+			'base_fee': 100000,
+			'genesis_block': "",
+			'genesis_height': 329203,
+			'name': networks.full_network_name_for_netcode ('LTC')
+		},
+		'DOGE': {
+			'code': 'DOGE',
+			'base_fee': 100000000,
+			'genesis_block': "",
+			'genesis_height': 481000,
+			'name': networks.full_network_name_for_netcode ('DOGE')
+		}
+	}
+""",
+		'XDT': {
+			'code': 'XDT',
+						'base_fee': 100000000,
+						'genesis_block': "",
+						'genesis_height': 100000,
+						'name': networks.full_network_name_for_netcode ('XDT')
+				}
+	}
+"""
+
+CONF = {
+	'malicious': False,
+	'chain': 'XLT',
+	'regtest': False,
+	'discard-old-blocks': False,
+	'maxpeers': 25,
+	'plugins': [ 'tst', 'hw', 'bs', 'fifo' ],
+	'backend': {
+		'protocol': ['rpc', 'chainsoapi'],
+		'rpc': {
+			'host': '82.196.1.65',
+			'port':'8080',
+			'user':'test',
+			'password': 'testpass',
+			'ssl': False
+		}
+	},
+	'api': {
+		'enabled': True,
+		'threads': 1,
+		'port': 8181
+	},
+	'dht': {
+		'seeds': [],
+		'port': 5051
+	}
+}
+
+
+
+
+
+
+formatter = ColoredFormatter(
+	'%(log_color)s[%(asctime)-8s] %(module)s: %(message_log_color)s%(message)s',
+	datefmt=None,
+	reset=True,
+	log_colors = {
+		'DEBUG':	'blue',
+		'PLUGINFO': 'purple',
+		'INFO':	 'green',
+		'WARNING':  'yellow',
+		'ERROR':	'red',
+		'CRITICAL': 'red',
+	},
+		secondary_log_colors={
+				'message': {
+			'DEBUG':	'purple',
+			'PLUGINFO': 'blue',
+			'INFO':	 'yellow',
+			'WARNING':  'green',
+			'ERROR':	'yellow',
+			'CRITICAL': 'red',
+				}
+		},
+	style = '%'
+)
+
+stream = logging.StreamHandler()
+stream.setFormatter(formatter)
+
+logger = logging.getLogger(APP_NAME)
+logger.addHandler(stream)
+
+
+logging.addLevelName(15, "PLUGINFO")
+logging.Logger.pluginfo = lambda self, message, *args, **kws: self._log(15, message, args, **kws) if self.isEnabledFor(15) else None

@@ -1,0 +1,97 @@
+import logging
+
+from .. import config, plugin
+from ..proto import Protocol
+from ..chain.message import Message
+
+logger = logging.getLogger(config.APP_NAME)
+
+class BlockStoreProto:
+	PLUGIN_CODE = 0x08
+	METHOD_SET = 0x01
+	METHOD_LIST = [METHOD_SET]
+
+
+class BlockStoreMessage (Message):
+	def set (key, value):
+		m = BlockStoreMessage ()
+		m.Key = key
+		m.Value = value
+		m.PluginCode = BlockStoreProto.PLUGIN_CODE
+		m.Method = BlockStoreProto.METHOD_SET
+		return m
+
+	def toJSON (self):
+		data = super (BlockStoreMessage, self).toJSON ()
+
+		if self.Method == BlockStoreProto.METHOD_SET:
+			data['key'] = self.Key
+			data['value'] = self.Value
+		else:
+			return None
+
+		return data
+
+
+class BlockStoreAPI (plugin.API):
+	def __init__ (self, vm, dht, api):
+		self.api = api
+		rpcmethods = {}
+
+		rpcmethods["get"] = {
+			"call": self.method_get,
+			"help": {"args": ["key"], "return": {}}
+		}
+
+		rpcmethods["set"] = {
+			"call": self.method_set,
+			"help": {"args": ["key", "value"], "return": {}}
+		}
+
+		errors = {}
+
+		super (BlockStoreAPI, self).__init__(vm, dht, rpcmethods, errors)
+
+
+	def method_get (self, key):
+		return self.vm.get (key)
+
+	def method_set (self, key, value):
+		message = BlockStoreMessage.set (key, value)
+		[datahash, outscript, tempid] = message.toOutputScript (self.dht)
+		r = { "outscript": outscript, "datahash": datahash, "tempid": tempid, "fee": Protocol.estimateFee (self.vm.getChainCode (), 100 * len (value)) }
+		return r
+
+
+class BlockStoreVM (plugin.VM):
+	def __init__ (self, chain, database):
+		super (BlockStoreVM, self).__init__ (chain, database)
+
+	def set (self, key, value):
+		if self.database.exists (key):
+			return
+		else:
+			self.database.set (key, value)
+
+	def get (self, key):
+		if not self.database.exists (key):
+			return None
+		else:
+			return self.database.get (key)
+	
+
+class BlockStorePlugin (plugin.Plugin):
+	def __init__ (self, chain, db, dht, apimaster):
+		self.VM = BlockStoreVM (chain, db)
+		super (BlockStorePlugin, self).__init__("BS", BlockStoreProto.PLUGIN_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht)
+		self.API = BlockStoreAPI (self.VM, self.DHT, apimaster)
+
+	def getAPI (self):
+		return self.API
+
+	def handleMessage (self, m):
+		if m.Method == BlockStoreProto.METHOD_SET:
+			logger.pluginfo ('Found new message %s: set %s', m.Hash, m.Data['key'])
+			self.VM.set (m.Data['key'], m.Data['value'])
+			
+		

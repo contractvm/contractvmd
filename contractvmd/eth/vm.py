@@ -1,0 +1,32 @@
+import logging
+
+from .. import config, plugin
+from ..proto import Protocol
+
+logger = logging.getLogger(config.APP_NAME)
+
+
+# Virtual Machine
+class EthVM (plugin.VM):
+	def __init__ (self, chain, database):
+		super (EthVM, self).__init__ (chain, database)
+		self.database.init ('Contracts', [])
+
+
+	def getStorageData (self, contracthash, data_index):
+		return None
+
+
+	def createContract (self, contracthash, contractcode, player, time):
+		pass
+
+
+	def send (self, contracthash, sendhash, data, player, time):
+		pass
+
+
+	def getSendResult (self, contracthash, sendhash):
+		return None
+
+	def getChainState (self):
+		return {}
