@@ -21,7 +21,7 @@ class Protocol:
 		return TIME_UNIT_BLOCKS
 
 	# Fee estimation
-	def estimateFee (chain, weight):
+	def estimateFee (chain, weight = 1000):
 		return config.CHAINS[chain]['base_fee'] + weight * 4 + 2
 
 

@@ -93,17 +93,14 @@ class BlockStoreVM (plugin.VM):
 	
 
 class BlockStorePlugin (plugin.Plugin):
-	def __init__ (self, chain, db, dht, apimaster):
-		self.VM = BlockStoreVM (chain, db)
-		super (BlockStorePlugin, self).__init__("BS", BlockStoreProto.PLUGIN_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht)
-		self.API = BlockStoreAPI (self.VM, self.DHT, apimaster)
-
-	def getAPI (self):
-		return self.API
+	def __init__ (self, chain, db, dht, apiMaster):
+		self.vm = BlockStoreVM (chain, db)
+		api = BlockStoreAPI (self.vm, dht, apiMaster)
+		super (BlockStorePlugin, self).__init__("BS", BlockStoreProto.PLUGIN_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == BlockStoreProto.METHOD_SET:
 			logger.pluginfo ('Found new message %s: set %s', m.Hash, m.Data['key'])
-			self.VM.set (m.Data['key'], m.Data['value'])
+			self.vm.set (m.Data['key'], m.Data['value'])
 			
 		

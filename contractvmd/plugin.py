@@ -5,16 +5,17 @@
 from .proto import Protocol
 
 class Plugin:
-	def __init__ (self, name, plugin_code, methods, chain, database, dht):
+	def __init__ (self, name, plugin_code, methods, chain, database, dht, api = None):
 		self.Name = name
 		self.PluginCode = plugin_code
 		self.Methods = methods
 		self.Database = database
 		self.Chain = chain
 		self.DHT = dht
+		self.API = api
 
 	def getAPI (self):
-		return None
+		return self.API
 
 	def handleMessage (self, message):
 		return None
