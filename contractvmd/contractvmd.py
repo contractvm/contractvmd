@@ -17,10 +17,9 @@ from .backend import daemonrpc, chainsoapi
 
 logger = logging.getLogger(config.APP_NAME)
 
-
 def signal_handler(signal, frame):
-        logger.critical ('Exiting...')
-        sys.exit (0)
+	logger.critical ('Exiting...')
+	sys.exit (0)
 
 def usage ():
 	print ('Usage:',sys.argv[0],'[OPTIONS]\n')

@@ -60,7 +60,6 @@ class DHT:
 		self.writelock.release ()
 		return r
 
-
 	def startServiceThread (self):
 		self.thread = Thread(target=self.serviceThread, args=())
 		self.thread.start()
