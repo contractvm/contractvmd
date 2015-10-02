@@ -103,7 +103,6 @@ CHAINS = {
 """
 
 CONF = {
-	'malicious': False,
 	'chain': 'XLT',
 	'regtest': False,
 	'discard-old-blocks': False,

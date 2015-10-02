@@ -47,7 +47,6 @@ class API:
 				"version": "0.1"
 			    }
 			}},
-			"consensus_test": {"args": ["valuex"], "return": {"value": "valuex if not malicious"}},
 			"net.peers": {"args": [], "return": {"list": [("host", "port", "id")]}},
 			"net.connections": {"args": [], "return": {"count": 'total_peers'}},
 			"help": {"args":[], "return": {}}
@@ -57,7 +56,6 @@ class API:
 		self.RPCDispatcher["broadcast"] = self.method_broadcast
 		self.RPCDispatcher["help"] = self.method_help
 		self.RPCDispatcher["info"] = self.method_info
-		self.RPCDispatcher["consensus_test"] = self.method_consensus_test
 		self.RPCDispatcher["net.peers"] = self.method_net_peers
 		self.RPCDispatcher["net.connections"] = self.method_net_connections
 
@@ -73,15 +71,6 @@ class API:
 	def method_net_peers (self):
 		return self.dht.peers ()
 
-	def method_consensus_test (self, v):
-		if config.CONF['malicious']:
-			if int(random.random () * 4) == 0:
-				return {'value': 1}
-			else:
-				return {'value': v}
-			#return {'value': int (random.random () * 100)}
-		else:
-			return {'value': v}
 
 	# Broadcast a signed transaction
 	def method_broadcast (self, thex, temp_id):

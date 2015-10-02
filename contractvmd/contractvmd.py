@@ -36,7 +36,6 @@ def usage ():
 	print ('\t--api-port=port\t\tset an api port')
 	print ('\t-s,--seed=host:port\t\tset a dht seed peer')
 	print ('\t--discard-old-blocks\t\tdiscard old blocks')
-	print ('\t--malicious\t\treturn wrong result with api.consensus_test')
 
 
 def main ():
@@ -46,7 +45,7 @@ def main ():
 	logger.info ('Starting %s %s', config.APP_NAME, config.APP_VERSION)
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hv:VD:c:b:t:a:sp", ["malicious", "discard-old-blocks", "help", "verbose=", "version", "data=", "daemon", "chain=", "backend=", "api-port=", "api=", "regtest", "seed=", "port="])
+		opts, args = getopt.getopt(sys.argv[1:], "hv:VD:c:b:t:a:sp", ["discard-old-blocks", "help", "verbose=", "version", "data=", "daemon", "chain=", "backend=", "api-port=", "api=", "regtest", "seed=", "port="])
 
 	except getopt.GetoptError:
 		usage()
@@ -130,9 +129,6 @@ def main ():
 			config.CONF['api']['port'] = int (arg)
 		elif opt in ("--discard-old-blocks"):
 			config.CONF['discard-old-blocks'] = True
-		elif opt in ("--malicious"):
-			config.CONF['malicious'] = True
-			logger.debug ('Running in malicious mode')
 
 	# Check for chain
 	if not config.CONF['chain'] in config.CHAINS:
