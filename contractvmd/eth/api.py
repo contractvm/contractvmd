@@ -8,7 +8,7 @@ from .. import plugin
 from ..proto import Protocol
 
 class EthAPI (plugin.API):	
-	def __init__ (self, vm, dht):
+	def __init__ (self, core, dht):
 		errors = {}
 		rpcmethods = {}
 
@@ -16,7 +16,7 @@ class EthAPI (plugin.API):
 			"return": {"outscript": "", "datahash": "", "fee": ""}}}
 		rpcmethods["info"] = {'call': self.method_info, 'help': {}, "return": {}}
 
-		super (EthAPI, self).__init__(vm, dht, rpcmethods, errors)
+		super (EthAPI, self).__init__(core, dht, rpcmethods, errors)
 
 		#self.method_tell ('<contract><intaction id="test" /></contract>', 'mn1FwcHcUDodajXGUFRdzx23BpGU7GJ7DV', 100)
 
@@ -27,6 +27,6 @@ class EthAPI (plugin.API):
  
 	# Return tstvm informations
 	def method_info (self):
-		return (self.vm.getChainState ())
+		return (self.core.getChainState ())
 		
 

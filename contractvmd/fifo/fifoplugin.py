@@ -66,9 +66,9 @@ class FIFOAPI (plugin.API):
 	def method_get_messages (self, queue, last):
 		return self.vm.getMessages (queue, last)
 
-class FIFOVM (plugin.VM):
+class FIFOCore (plugin.Core):
 	def __init__ (self, chain, database):
-		super (FIFOVM, self).__init__ (chain, database)
+		super (FIFOCore, self).__init__ (chain, database)
 
 	def publishMessage (self, queue, body):
 		qlist = []
@@ -92,16 +92,14 @@ class FIFOVM (plugin.VM):
 
 class FIFOPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
-		self.VM = FIFOVM (chain, db)
-		super (FIFOPlugin, self).__init__("FIFO", FIFOProto.PLUGIN_CODE, FIFOProto.METHOD_LIST, chain, db, dht)
-		self.API = FIFOAPI (self.VM, self.DHT, apimaster)
-
-	def getAPI (self):
-		return self.API
+		self.core = FIFOCore (chain, db)
+		api = FIFOAPI (self.core, self.DHT, apimaster)		
+		super (FIFOPlugin, self).__init__("FIFO", FIFOProto.PLUGIN_CODE, FIFOProto.METHOD_LIST, chain, db, dht, api)
+		
 
 	def handleMessage (self, m):
 		if m.Method == FIFOProto.METHOD_PUBLISH_MESSAGE:
 			logger.pluginfo ('Found new message %s: publish on queue %s', m.Hash, m.Data['queue'])
-			self.VM.publishMessage (m.Data['queue'], m.Data['body'])
+			self.core.publishMessage (m.Data['queue'], m.Data['body'])
 			
 		

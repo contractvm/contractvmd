@@ -66,9 +66,9 @@ class HelloWorldAPI (plugin.API):
 		return r
 
 
-class HelloWorldVM (plugin.VM):
+class HelloWorldCore (plugin.Core):
 	def __init__ (self, chain, database):
-		super (HelloWorldVM, self).__init__ (chain, database)
+		super (HelloWorldCore, self).__init__ (chain, database)
 		self.database.init ('names', {})
 
 	def addName (self, name):
@@ -86,16 +86,13 @@ class HelloWorldVM (plugin.VM):
 
 class HelloWorldPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
-		self.VM = HelloWorldVM (chain, db)
-		super (HelloWorldPlugin, self).__init__("HW", HelloWorldProto.PLUGIN_CODE, HelloWorldProto.METHOD_LIST, chain, db, dht)
-		self.API = HelloWorldAPI (self.VM, self.DHT, apimaster)
-
-	def getAPI (self):
-		return self.API
+		self.core = HelloWorldCore (chain, db)
+		api = HelloWorldAPI (self.core, self.DHT, apimaster)
+		super (HelloWorldPlugin, self).__init__("HW", HelloWorldProto.PLUGIN_CODE, HelloWorldProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == HelloWorldProto.METHOD_HELLO:
 			logger.pluginfo ('Found new message %s: hello %s', m.Hash, m.Data['name'])
-			self.VM.addName (m.Data['name'])
+			self.core.addName (m.Data['name'])
 			
 		

@@ -10,7 +10,7 @@ from .tibet import Tibet
 from ..proto import Protocol
 
 class TSTAPI (plugin.API):
-	def __init__ (self, vm, dht, api):
+	def __init__ (self, core, dht, api):
 		self.api = api
 		rpcmethods = {}
 		rpcmethods["tell"] = {
@@ -196,7 +196,7 @@ class TSTAPI (plugin.API):
 			'CONTRACTS_NOT_COMPLIANT': {'code': -9, 'message': 'Contracts not compliant'}
 		}
 
-		super (TSTAPI, self).__init__(vm, dht, rpcmethods, errors)
+		super (TSTAPI, self).__init__(core, dht, rpcmethods, errors)
 
 		#self.method_tell ('<contract><intaction id="test" /></contract>', 'mn1FwcHcUDodajXGUFRdzx23BpGU7GJ7DV', 100)
 		#self.method_accept ('8a4ae92bb250caa3abc8ef347a37f61f1edc290333fb58af816235f9a920c406', 'moRyzcLkAzN3kqwmFwMV2E5RLuK4SFCHyg')

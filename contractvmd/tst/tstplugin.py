@@ -5,21 +5,16 @@
 import logging
 
 from .. import config, plugin
-from . import vm, api, proto
+from . import core, api, proto
 
 logger = logging.getLogger(config.APP_NAME)
 
 
 class TSTPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
-		self.VM = vm.TSTVM (chain, db)
-		super (TSTPlugin, self).__init__('TST', proto.TSTProto.PLUGIN_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht)
-		self.API = api.TSTAPI (self.VM, self.DHT, apimaster)
-
-
-
-	def getAPI (self):
-		return self.API
+		self.core = vm.TSTCore (chain, db)
+		api = api.TSTAPI (self.core, self.DHT, apimaster)
+		super (TSTPlugin, self).__init__('TST', proto.TSTProto.PLUGIN_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == proto.TSTProto.METHOD_TELL:
@@ -35,7 +30,7 @@ class TSTPlugin (plugin.Plugin):
 
 				# TODO check for expire validity
 
-				return self.VM.tell (m.Hash, m.Contract, m.Player, m.Expire, self.VM.getTime (m.Block))
+				return self.core.tell (m.Hash, m.Contract, m.Player, m.Expire, self.core.getTime (m.Block))
 
 
 		elif m.Method == proto.TSTProto.METHOD_DO:
@@ -49,7 +44,7 @@ class TSTPlugin (plugin.Plugin):
 				m.Nonce = int (m.Data['nonce'])
 				m.Value = m.Data['value']
 
-				return self.VM.do (m.Session, m.Hash, m.Action, m.Value, m.Nonce, m.Player, self.VM.getTime (m.Block))
+				return self.core.do (m.Session, m.Hash, m.Action, m.Value, m.Nonce, m.Player, self.core.getTime (m.Block))
 
 
 		elif m.Method == proto.TSTProto.METHOD_FUSE:
@@ -61,7 +56,7 @@ class TSTPlugin (plugin.Plugin):
 				m.ContractP = m.Data['contractphash']
 				m.ContractQ = m.Data['contractqhash']
 
-				return self.VM.fuse (m.Hash, m.ContractP, m.ContractQ, m.Player, self.VM.getTime (m.Block))
+				return self.core.fuse (m.Hash, m.ContractP, m.ContractQ, m.Player, self.core.getTime (m.Block))
 
 
 		elif m.Method == proto.TSTProto.METHOD_ACCEPT:
@@ -72,6 +67,6 @@ class TSTPlugin (plugin.Plugin):
 			else:
 				m.Contract = m.Data['contracthash']
 
-				return self.VM.accept (m.Hash, m.Contract, m.Player, self.VM.getTime (m.Block))
+				return self.core.accept (m.Hash, m.Contract, m.Player, self.core.getTime (m.Block))
 		else:
 			return False

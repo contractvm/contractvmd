@@ -38,7 +38,7 @@ class BlockStoreMessage (Message):
 
 
 class BlockStoreAPI (plugin.API):
-	def __init__ (self, vm, dht, api):
+	def __init__ (self, core, dht, api):
 		self.api = api
 		rpcmethods = {}
 
@@ -55,29 +55,29 @@ class BlockStoreAPI (plugin.API):
 		errors = { 'KEY_ALREADY_SET': {'code': -2, 'message': 'Key already set'}, 'KEY_IS_NOT_SET': {'code': -3, 'message': 'Key is not set'} }
 
 
-		super (BlockStoreAPI, self).__init__(vm, dht, rpcmethods, errors)
+		super (BlockStoreAPI, self).__init__(core, dht, rpcmethods, errors)
 
 
 	def method_get (self, key):
-		v = self.vm.get (key)
+		v = self.core.get (key)
 		if v == None:
 			return self.createErrorResponse ('KEY_IS_NOT_SET')
 		else:
 			return v
 		
 	def method_set (self, key, value):
-		if self.vm.get (key) != None:
+		if self.core.get (key) != None:
 			return self.createErrorResponse ('KEY_ALREADY_SET')
 		
 		message = BlockStoreMessage.set (key, value)
 		[datahash, outscript, tempid] = message.toOutputScript (self.dht)
-		r = { "outscript": outscript, "datahash": datahash, "tempid": tempid, "fee": Protocol.estimateFee (self.vm.getChainCode (), 100 * len (value)) }
+		r = { "outscript": outscript, "datahash": datahash, "tempid": tempid, "fee": Protocol.estimateFee (self.core.getChainCode (), 100 * len (value)) }
 		return r
 
 
-class BlockStoreVM (plugin.VM):
+class BlockStoreCore (plugin.Core):
 	def __init__ (self, chain, database):
-		super (BlockStoreVM, self).__init__ (chain, database)
+		super (BlockStoreCore, self).__init__ (chain, database)
 
 	def set (self, key, value):
 		if self.database.exists (key):
@@ -94,13 +94,13 @@ class BlockStoreVM (plugin.VM):
 
 class BlockStorePlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apiMaster):
-		self.vm = BlockStoreVM (chain, db)
-		api = BlockStoreAPI (self.vm, dht, apiMaster)
+		self.core = BlockStoreCore (chain, db)
+		api = BlockStoreAPI (self.core, dht, apiMaster)
 		super (BlockStorePlugin, self).__init__("BS", BlockStoreProto.PLUGIN_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == BlockStoreProto.METHOD_SET:
 			logger.pluginfo ('Found new message %s: set %s', m.Hash, m.Data['key'])
-			self.vm.set (m.Data['key'], m.Data['value'])
+			self.core.set (m.Data['key'], m.Data['value'])
 			
 		

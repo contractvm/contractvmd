@@ -22,8 +22,8 @@ class Plugin:
 
 
 class API:
-	def __init__ (self, vm, dht, rpcmethods, errors):
-		self.vm = vm
+	def __init__ (self, core, dht, rpcmethods, errors):
+		self.core = core
 		self.dht = dht
 		self.errors = errors
 		self.rpcmethods = rpcmethods
@@ -38,7 +38,7 @@ class API:
 			return { 'error': -1, 'message': 'General error ('+str(error)+')' }
 
 
-class VM:
+class Core:
 	def __init__ (self, chain, database):
 		self.chain = chain
 		self.database = database

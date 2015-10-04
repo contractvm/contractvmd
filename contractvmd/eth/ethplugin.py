@@ -5,16 +5,16 @@
 import logging
 
 from .. import config, plugin
-from . import vm, api, proto
+from . import core, api, proto
 
 logger = logging.getLogger(config.APP_NAME)
 
 
 class EthPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht):
-		self.VM = vm.EthVM (chain, db)
+		self.core = core.EthCore (chain, db)
 		super (EthPlugin, self).__init__('ETH', proto.EthProto.PLUGIN_CODE, proto.EthProto.METHOD_LIST, chain, db, dht)
-		self.API = api.EthAPI (self.VM, self.DHT)
+		self.API = api.EthAPI (self.core, self.DHT)
 
 
 	def getAPI (self):

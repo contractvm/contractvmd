@@ -11,9 +11,9 @@ logger = logging.getLogger(config.APP_NAME)
 
 
 # Virtual Machine
-class EthVM (plugin.VM):
+class EthCore (plugin.Core):
 	def __init__ (self, chain, database):
-		super (EthVM, self).__init__ (chain, database)
+		super (EthCore, self).__init__ (chain, database)
 		self.database.init ('Contracts', [])
 
 

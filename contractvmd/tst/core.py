@@ -14,9 +14,9 @@ logger = logging.getLogger(config.APP_NAME)
 
 
 # Virtual Machine for contract/session handling
-class TSTVM (plugin.VM):
+class TSTCore (plugin.Core):
 	def __init__ (self, chain, database):
-		super (TSTVM, self).__init__ (chain, database)
+		super (TSTCore, self).__init__ (chain, database)
 
 		self.database.init ('Contracts', [])
 		self.database.init ('ContractsPending', [])
