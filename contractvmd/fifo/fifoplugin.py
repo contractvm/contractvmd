@@ -93,7 +93,7 @@ class FIFOCore (plugin.Core):
 class FIFOPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
 		self.core = FIFOCore (chain, db)
-		api = FIFOAPI (self.core, self.DHT, apimaster)		
+		api = FIFOAPI (self.core, dht, apimaster)		
 		super (FIFOPlugin, self).__init__("FIFO", FIFOProto.PLUGIN_CODE, FIFOProto.METHOD_LIST, chain, db, dht, api)
 		
 

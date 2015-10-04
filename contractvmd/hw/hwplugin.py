@@ -87,7 +87,7 @@ class HelloWorldCore (plugin.Core):
 class HelloWorldPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
 		self.core = HelloWorldCore (chain, db)
-		api = HelloWorldAPI (self.core, self.DHT, apimaster)
+		api = HelloWorldAPI (self.core, dht, apimaster)
 		super (HelloWorldPlugin, self).__init__("HW", HelloWorldProto.PLUGIN_CODE, HelloWorldProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):

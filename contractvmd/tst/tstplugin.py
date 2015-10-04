@@ -12,9 +12,9 @@ logger = logging.getLogger(config.APP_NAME)
 
 class TSTPlugin (plugin.Plugin):
 	def __init__ (self, chain, db, dht, apimaster):
-		self.core = vm.TSTCore (chain, db)
-		api = api.TSTAPI (self.core, self.DHT, apimaster)
-		super (TSTPlugin, self).__init__('TST', proto.TSTProto.PLUGIN_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht, api)
+		self.core = core.TSTCore (chain, db)
+		apip = api.TSTAPI (self.core, dht, apimaster)
+		super (TSTPlugin, self).__init__('TST', proto.TSTProto.PLUGIN_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht, apip)
 
 	def handleMessage (self, m):
 		if m.Method == proto.TSTProto.METHOD_TELL:
