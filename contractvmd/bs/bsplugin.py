@@ -21,7 +21,7 @@ class BlockStoreMessage (Message):
 		m = BlockStoreMessage ()
 		m.Key = key
 		m.Value = value
-		m.PluginCode = BlockStoreProto.DAPP_CODE
+		m.DappCode = BlockStoreProto.DAPP_CODE
 		m.Method = BlockStoreProto.METHOD_SET
 		return m
 
