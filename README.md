@@ -31,4 +31,6 @@ python3 bs_helloworld.py get
 # The sample app now asks for a previously saved key, querying nodes (at the time, the local node) and returning the resulting value
 ```
 
+Note that the default contractvmd uses Litecoin testnet as blockchain, and it connets to our test server to achieve a running litecoind instances.
+
 Obviously, you can start the contractvmd daemon from multiple nodes, creating a complex network; at the time there isn't a bootstraping mechanism (but it will be available soon), so when you start a new instance you have to specify a list of seed nodes.

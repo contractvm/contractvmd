@@ -14,12 +14,12 @@ from . import config
 def usage ():
 	print ('Usage:', sys.argv[0], '[option] action')
 	print ('Actions:')
-	print ('\t-s, --search=query\t\tsearch for a plugin')
-	print ('\t-i, --install=url/name\t\tinstall a plugin by its git repository or by its name')
-	print ('\t-ii, --info=url/name\t\treturn informations about a plugin')
-	print ('\t-r, --remove=name\t\tremove an installed plugin')
-	print ('\t-l, --list\t\t\tlist installed plugins')
-	print ('\t-c, --create\t\t\tcreate a new empty plugin starting from a template')
+	print ('\t-s, --search=query\t\tsearch for a dapp')
+	print ('\t-i, --install=url/name\t\tinstall a dapp by its git repository or by its name')
+	print ('\t-ii, --info=url/name\t\treturn informations about a dapp')
+	print ('\t-r, --remove=name\t\tremove an installed dapp')
+	print ('\t-l, --list\t\t\tlist installed dapps')
+	print ('\t-c, --create\t\t\tcreate a new empty dapp starting from a template')
 	print ('\t-h, --help\t\t\this help')
 	print ('\t-v, --version\t\t\tversion')
 	print ('')
@@ -27,7 +27,7 @@ def usage ():
 	print ('\t-d,--data=path\t\t\tspecify a custom data directory path (default: '+config.DATA_DIR+')')
 
 def create_wizard ():
-	name = raw_input ('Plugin name: ')
+	name = raw_input ('Dapp name: ')
 	
 
 def main ():
@@ -65,6 +65,6 @@ def main ():
 
 
 		elif opt in ("-l", "--list"):
-			print ('installed plugins:')
+			print ('installed dapps:')
 			sys.exit ()
 

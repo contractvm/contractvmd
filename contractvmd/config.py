@@ -52,7 +52,7 @@ TEMP_DIR = DATA_DIR + TEMP_DIR_RELATIVE
 
 
 BACKEND_PROTOCOLS = ['rpc', 'chainsoapi']
-PLUGINS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
+DAPPS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
 
 CHAINS = {
 		'XTN' : {
@@ -107,7 +107,7 @@ CONF = {
 	'regtest': False,
 	'discard-old-blocks': False,
 	'maxpeers': 25,
-	'plugins': [ 'tst', 'hw', 'bs', 'fifo' ],
+	'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
 	'backend': {
 		'protocol': ['rpc', 'chainsoapi'],
 		'rpc': {

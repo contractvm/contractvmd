@@ -13,14 +13,14 @@ logger = logging.getLogger(config.APP_NAME)
 
 class PluginManager:
 	def __init__ (self):
-		self.plugins = {}
+		self.dapps = {}
 
 	def load (self, pname, chain, db, dht, api):
-		classname = config.PLUGINS[pname.upper ()]
+		classname = config.DAPPS[pname.upper ()]
 
-		logger.pluginfo ('Plugging module "%s"', pname.upper ())
-		exec ('from .' + pname.lower() + '.' + pname.lower() + 'plugin import ' + classname + 'Plugin')
-		pc = eval (classname+'Plugin')
+		logger.pluginfo ('Plugging dapp "%s"', pname.upper ())
+		exec ('from .' + pname.lower() + '.' + pname.lower() + 'plugin import ' + classname + 'Dapp')
+		pc = eval (classname+'Dapp')
 
 		po = pc (chain, db.newNamespaceInstance (pname.upper () + '_'), dht, api)
 
@@ -28,15 +28,15 @@ class PluginManager:
 		for m in rpcm:
 			api.registerRPCMethod (pname.lower () + '.' + m, rpcm[m])
 
-		self.plugins[po.Name] = po
+		self.dapps[po.Name] = po
 
 
 
 	# Handle message received from the DHT
 	def handleMessage (self, m):
-		for p in self.plugins:
-			if m.PluginCode == self.plugins[p].PluginCode:
+		for p in self.dapps:
+			if m.DappCode == self.dapps[p].DappCode:
 				logger.pluginfo ('Found handler %s for message %s from %s', p, m.Hash, m.Player)
-				return self.plugins[p].handleMessage (m)
-		logger.error ('Cannot handle message method %d for plugin %d', m.Method, m.PluginCode)
+				return self.dapps[p].handleMessage (m)
+		logger.error ('Cannot handle message method %d for dapp %d', m.Method, m.DappCode)
 		return None

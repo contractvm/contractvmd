@@ -203,7 +203,6 @@ class Chain:
 		self.blockwatchthread = Thread(target=self.blockwatch.run, args=())
 		self.blockwatchthread.start()
 
-
 		self.datawatchthread = Thread(target=self.dataHandler, args=())
 		self.datawatchthread.start()
 

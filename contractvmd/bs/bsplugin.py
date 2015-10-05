@@ -4,14 +4,14 @@
 
 import logging
 
-from .. import config, plugin
+from .. import config, dapp
 from ..proto import Protocol
 from ..chain.message import Message
 
 logger = logging.getLogger(config.APP_NAME)
 
 class BlockStoreProto:
-	PLUGIN_CODE = 0x08
+	DAPP_CODE = 0x08
 	METHOD_SET = 0x01
 	METHOD_LIST = [METHOD_SET]
 
@@ -21,7 +21,7 @@ class BlockStoreMessage (Message):
 		m = BlockStoreMessage ()
 		m.Key = key
 		m.Value = value
-		m.PluginCode = BlockStoreProto.PLUGIN_CODE
+		m.PluginCode = BlockStoreProto.DAPP_CODE
 		m.Method = BlockStoreProto.METHOD_SET
 		return m
 
@@ -37,7 +37,7 @@ class BlockStoreMessage (Message):
 		return data
 
 
-class BlockStoreAPI (plugin.API):
+class BlockStoreAPI (dapp.API):
 	def __init__ (self, core, dht, api):
 		self.api = api
 		rpcmethods = {}
@@ -75,7 +75,7 @@ class BlockStoreAPI (plugin.API):
 		return r
 
 
-class BlockStoreCore (plugin.Core):
+class BlockStoreCore (dapp.Core):
 	def __init__ (self, chain, database):
 		super (BlockStoreCore, self).__init__ (chain, database)
 
@@ -92,11 +92,11 @@ class BlockStoreCore (plugin.Core):
 			return self.database.get (key)
 	
 
-class BlockStorePlugin (plugin.Plugin):
+class BlockStoreDapp (dapp.Dapp):
 	def __init__ (self, chain, db, dht, apiMaster):
 		self.core = BlockStoreCore (chain, db)
 		api = BlockStoreAPI (self.core, dht, apiMaster)
-		super (BlockStorePlugin, self).__init__("BS", BlockStoreProto.PLUGIN_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht, api)
+		super (BlockStoreDapp, self).__init__("BS", BlockStoreProto.DAPP_CODE, BlockStoreProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == BlockStoreProto.METHOD_SET:

@@ -22,7 +22,7 @@ class Message ():
 	def __init__ (self):
 		self.Transaction = None
 		self.Method = None
-		self.PluginCode = None
+		self.DappCode = None
 		self.Protocol = Protocol.VERSION
 		self.Data = None
 		self.Hash = ""
@@ -101,7 +101,7 @@ class Message ():
 
 			# Grab metadata from transaction
 			m.Protocol = ord (data[len(Protocol.MAGIC_FLAG):len(Protocol.MAGIC_FLAG)+1])
-			m.PluginCode = ord (data[len(Protocol.MAGIC_FLAG)+1:len(Protocol.MAGIC_FLAG)+2])
+			m.DappCode = ord (data[len(Protocol.MAGIC_FLAG)+1:len(Protocol.MAGIC_FLAG)+2])
 			m.Method = ord (data[len(Protocol.MAGIC_FLAG)+2:len(Protocol.MAGIC_FLAG)+3])
 			m.Hash = tx.id ()
 			m.Block = blockn

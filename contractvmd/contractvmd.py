@@ -198,8 +198,8 @@ def main ():
 	else:
 		aapi = None
 
-	# Load all plugins
-	for p in config.CONF['plugins']:
+	# Load all dapps
+	for p in config.CONF['dapps']:
 		pm.load (p, ch, db, ddht, aapi)
 
 

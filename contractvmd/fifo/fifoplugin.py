@@ -4,14 +4,14 @@
 
 import logging
 
-from .. import config, plugin
+from .. import config, dapp
 from ..proto import Protocol
 from ..chain.message import Message
 
 logger = logging.getLogger(config.APP_NAME)
 
 class FIFOProto:
-	PLUGIN_CODE = 0x09
+	DAPP_CODE = 0x09
 	METHOD_PUBLISH_MESSAGE = 0x01
 	METHOD_LIST = [METHOD_PUBLISH_MESSAGE]
 
@@ -21,7 +21,7 @@ class FIFOMessage (Message):
 		m = FIFOMessage ()
 		m.Queue = queue
 		m.Body = body
-		m.PluginCode = FIFOProto.PLUGIN_CODE
+		m.PluginCode = FIFOProto.DAPP_CODE
 		m.Method = FIFOProto.METHOD_PUBLISH_MESSAGE
 		return m
 
@@ -37,7 +37,7 @@ class FIFOMessage (Message):
 		return data
 
 
-class FIFOAPI (plugin.API):
+class FIFOAPI (dapp.API):
 	def __init__ (self, vm, dht, api):
 		self.api = api
 		rpcmethods = {}
@@ -66,7 +66,7 @@ class FIFOAPI (plugin.API):
 	def method_get_messages (self, queue, last):
 		return self.vm.getMessages (queue, last)
 
-class FIFOCore (plugin.Core):
+class FIFOCore (dapp.Core):
 	def __init__ (self, chain, database):
 		super (FIFOCore, self).__init__ (chain, database)
 
@@ -90,11 +90,11 @@ class FIFOCore (plugin.Core):
 		return {'size': len (msgs), 'messages': msgsn}
 	
 
-class FIFOPlugin (plugin.Plugin):
+class FIFODapp (dapp.Dapp):
 	def __init__ (self, chain, db, dht, apimaster):
 		self.core = FIFOCore (chain, db)
 		api = FIFOAPI (self.core, dht, apimaster)		
-		super (FIFOPlugin, self).__init__("FIFO", FIFOProto.PLUGIN_CODE, FIFOProto.METHOD_LIST, chain, db, dht, api)
+		super (FIFODapp, self).__init__("FIFO", FIFOProto.DAPP_CODE, FIFOProto.METHOD_LIST, chain, db, dht, api)
 		
 
 	def handleMessage (self, m):

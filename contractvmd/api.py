@@ -96,7 +96,7 @@ class API:
 	def method_info (self):
 		return {'chain': {'height': self.chain.getChainHeight (), 'regtest': config.CONF['regtest'],
 			'code': self.chain.getChainCode (), 'name': self.chain.getChainName ()},
-			'node': { 'plugins': config.CONF['plugins'], 'backend': config.CONF['backend']['protocol'],
+			'node': { 'dapps': config.CONF['dapps'], 'backend': config.CONF['backend']['protocol'],
 			'version': config.APP_VERSION }}
 
 

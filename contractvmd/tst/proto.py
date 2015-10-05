@@ -3,7 +3,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 class TSTProto:
-	PLUGIN_CODE = 0x01
+	DAPP_CODE = 0x01
 
 	METHOD_TELL = 0x00
 	METHOD_FUSE = 0x01

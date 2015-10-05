@@ -4,10 +4,10 @@
 
 from .proto import Protocol
 
-class Plugin:
-	def __init__ (self, name, plugin_code, methods, chain, database, dht, api = None):
+class Dapp:
+	def __init__ (self, name, dapp_code, methods, chain, database, dht, api = None):
 		self.Name = name
-		self.PluginCode = plugin_code
+		self.DappCode = dapp_code
 		self.Methods = methods
 		self.Database = database
 		self.Chain = chain

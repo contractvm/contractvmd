@@ -4,14 +4,14 @@
 
 import logging
 
-from .. import config, plugin
+from .. import config, dapp
 from ..proto import Protocol
 from ..chain.message import Message
 
 logger = logging.getLogger(config.APP_NAME)
 
 class HelloWorldProto:
-	PLUGIN_CODE = 0x05
+	DAPP_CODE = 0x05
 	METHOD_HELLO = 0x01
 	METHOD_LIST = [METHOD_HELLO]
 
@@ -20,7 +20,7 @@ class HelloWorldMessage (Message):
 	def hello (name):
 		m = HelloWorldMessage ()
 		m.Name = name
-		m.PluginCode = HelloWorldProto.PLUGIN_CODE
+		m.PluginCode = HelloWorldProto.DAPP_CODE
 		m.Method = HelloWorldProto.METHOD_HELLO
 		return m
 
@@ -36,7 +36,7 @@ class HelloWorldMessage (Message):
 
 
 
-class HelloWorldAPI (plugin.API):
+class HelloWorldAPI (dapp.API):
 	def __init__ (self, vm, dht, api):
 		self.api = api
 		rpcmethods = {}
@@ -66,7 +66,7 @@ class HelloWorldAPI (plugin.API):
 		return r
 
 
-class HelloWorldCore (plugin.Core):
+class HelloWorldCore (dapp.Core):
 	def __init__ (self, chain, database):
 		super (HelloWorldCore, self).__init__ (chain, database)
 		self.database.init ('names', {})
@@ -84,11 +84,11 @@ class HelloWorldCore (plugin.Core):
 		return self.database.get ('names')
 	
 
-class HelloWorldPlugin (plugin.Plugin):
+class HelloWorldDapp (dapp.Dapp):
 	def __init__ (self, chain, db, dht, apimaster):
 		self.core = HelloWorldCore (chain, db)
 		api = HelloWorldAPI (self.core, dht, apimaster)
-		super (HelloWorldPlugin, self).__init__("HW", HelloWorldProto.PLUGIN_CODE, HelloWorldProto.METHOD_LIST, chain, db, dht, api)
+		super (HelloWorldDapp, self).__init__("HW", HelloWorldProto.DAPP_CODE, HelloWorldProto.METHOD_LIST, chain, db, dht, api)
 
 	def handleMessage (self, m):
 		if m.Method == HelloWorldProto.METHOD_HELLO:

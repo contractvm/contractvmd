@@ -4,7 +4,7 @@
 
 import logging
 
-from .. import config, plugin
+from .. import config, dapp
 from ..proto import Protocol
 from .sessioninstance import SessionInstance
 from .tibet import Tibet
@@ -14,7 +14,7 @@ logger = logging.getLogger(config.APP_NAME)
 
 
 # Virtual Machine for contract/session handling
-class TSTCore (plugin.Core):
+class TSTCore (dapp.Core):
 	def __init__ (self, chain, database):
 		super (TSTCore, self).__init__ (chain, database)
 

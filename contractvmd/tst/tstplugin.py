@@ -4,17 +4,17 @@
 
 import logging
 
-from .. import config, plugin
+from .. import config, dapp
 from . import core, api, proto
 
 logger = logging.getLogger(config.APP_NAME)
 
 
-class TSTPlugin (plugin.Plugin):
+class TSTDapp (dapp.Dapp):
 	def __init__ (self, chain, db, dht, apimaster):
 		self.core = core.TSTCore (chain, db)
 		apip = api.TSTAPI (self.core, dht, apimaster)
-		super (TSTPlugin, self).__init__('TST', proto.TSTProto.PLUGIN_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht, apip)
+		super (TSTDapp, self).__init__('TST', proto.TSTProto.DAPP_CODE, proto.TSTProto.METHOD_LIST, chain, db, dht, apip)
 
 	def handleMessage (self, m):
 		if m.Method == proto.TSTProto.METHOD_TELL:

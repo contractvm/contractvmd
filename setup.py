@@ -15,7 +15,7 @@ setup(name='contractvm',
 	entry_points={
 		'console_scripts': [
 			'contractvmd=contractvmd.contractvmd:main',
-			'cvm-packman=contractvmd.packagemanager:main',
+			'cvm-dappman=contractvmd.dappman:main',
 		],
 	},
 )

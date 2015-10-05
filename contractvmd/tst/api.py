@@ -4,12 +4,12 @@
 
 import copy
 
-from .. import plugin
+from .. import dapp
 from .message import TSTMessage
 from .tibet import Tibet
 from ..proto import Protocol
 
-class TSTAPI (plugin.API):
+class TSTAPI (dapp.API):
 	def __init__ (self, core, dht, api):
 		self.api = api
 		rpcmethods = {}
