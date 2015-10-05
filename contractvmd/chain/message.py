@@ -58,7 +58,7 @@ class Message ():
 			temp_id = dht.prepare (data)
 
 			# Create opreturn
-			opret = Protocol.MAGIC_FLAG + chr (self.Protocol) + chr (self.PluginCode) + chr (self.Method) + 'x' + datahash.decode ()
+			opret = Protocol.MAGIC_FLAG + chr (self.Protocol) + chr (self.DappCode) + chr (self.Method) + 'x' + datahash.decode ()
 			retscript = "OP_RETURN " + str (binascii.hexlify (opret.encode ('ascii')))[2:-1]
 
 			if len (retscript) > Protocol.STORAGE_OPRETURN_LIMIT:
