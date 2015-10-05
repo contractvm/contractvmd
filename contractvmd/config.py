@@ -53,6 +53,7 @@ DAPPS_DIR_RELATIVE = '/dapps/'
 DAPPS_DIR = DATA_DIR + DAPPS_DIR_RELATIVE
 
 BACKEND_PROTOCOLS = ['rpc', 'chainsoapi']
+DAPPS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
 
 CHAINS = {
 		'XTN' : {
@@ -99,7 +100,8 @@ CONF = {
 	'regtest': False,
 	'discard-old-blocks': False,
 	'maxpeers': 25,
-	'dapps': {
+	'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
+	'dappsd': {
 		'list': [],
 		'enabled': []
 	},
