@@ -91,6 +91,12 @@ def main ():
 		logger.warning ('Directory %s created', config.DATA_DIR + config.TEMP_DIR_RELATIVE)
 		config.TEMP_DIR = config.DATA_DIR + config.TEMP_DIR_RELATIVE
 
+	# Check if dapps dir exists
+	if not os.path.isdir (config.DATA_DIR + config.DAPPS_DIR_RELATIVE):
+		logger.warning ('Directory %s not present', config.DATA_DIR + config.DAPPS_DIR_RELATIVE)
+		os.mkdir (config.DATA_DIR + config.DAPPS_DIR_RELATIVE)
+		logger.warning ('Directory %s created', config.DATA_DIR + config.DAPPS_DIR_RELATIVE)
+		config.DAPPS_DIR = config.DATA_DIR + config.DAPPS_DIR_RELATIVE
 
 	# Check if config file exits
 	if not os.path.exists(config.DATA_DIR+'/'+config.APP_NAME+'.json'):

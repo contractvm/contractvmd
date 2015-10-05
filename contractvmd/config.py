@@ -12,11 +12,11 @@ import sys
 def app_data_path (appauthor, appname, roaming=True):
 	if sys.platform.startswith('java'):
 		os_name = platform.java_ver()[3][0]
-		if os_name.startswith('Windows'): # "Windows XP", "Windows 7", etc.
+		if os_name.startswith('Windows'):
 			system = 'win32'
-		elif os_name.startswith('Mac'): # "Mac OS X", etc.
+		elif os_name.startswith('Mac'):
 			system = 'darwin'
-		else: # "Linux", "SunOS", "FreeBSD", etc.
+		else:
 			system = 'linux2'
 	else:
 		system = sys.platform
@@ -49,10 +49,10 @@ APP_AUTHOR = 'Davide Gessa'
 DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)
 TEMP_DIR_RELATIVE = '/temp/'
 TEMP_DIR = DATA_DIR + TEMP_DIR_RELATIVE
-
+DAPPS_DIR_RELATIVE = '/dapps/'
+DAPPS_DIR = DATA_DIR + DAPPS_DIR_RELATIVE
 
 BACKEND_PROTOCOLS = ['rpc', 'chainsoapi']
-DAPPS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
 
 CHAINS = {
 		'XTN' : {
@@ -91,23 +91,18 @@ CHAINS = {
 			'name': networks.full_network_name_for_netcode ('DOGE')
 		}
 	}
-""",
-		'XDT': {
-			'code': 'XDT',
-						'base_fee': 100000000,
-						'genesis_block': "",
-						'genesis_height': 100000,
-						'name': networks.full_network_name_for_netcode ('XDT')
-				}
-	}
-"""
+
+
 
 CONF = {
 	'chain': 'XLT',
 	'regtest': False,
 	'discard-old-blocks': False,
 	'maxpeers': 25,
-	'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
+	'dapps': {
+		'list': [],
+		'enabled': []
+	},
 	'backend': {
 		'protocol': ['rpc', 'chainsoapi'],
 		'rpc': {
@@ -146,16 +141,16 @@ formatter = ColoredFormatter(
 		'ERROR':	'red',
 		'CRITICAL': 'red',
 	},
-		secondary_log_colors={
-				'message': {
+	secondary_log_colors={
+		'message': {
 			'DEBUG':	'purple',
 			'PLUGINFO': 'blue',
 			'INFO':	 'yellow',
 			'WARNING':  'green',
 			'ERROR':	'yellow',
 			'CRITICAL': 'red',
-				}
-		},
+		}
+	},
 	style = '%'
 )
 
