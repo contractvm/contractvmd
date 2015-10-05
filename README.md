@@ -26,9 +26,9 @@ The default daemon instance includes all case studies dapps: blockstore, fifo-mo
 cd ~/cvm-temp/libcontractvm/samples
 python3 bs_helloworld.py set
 # The sample app asks for a key-value pair, and it broadcasts the new pair in the network
-# After some minutes, the message will appears as confirmed in the blockchain; you can check the arrival of the message by switching in the contractvmd terminal.
+# After some minutes, the message will appear as confirmed in the blockchain; you can check the arrival of the message by switching in the contractvmd terminal.
 python3 bs_helloworld.py get
-# The sample app now asks for a previously saved key, querying node (at the time the local node) and returning the resulting value
+# The sample app now asks for a previously saved key, querying nodes (at the time, the local node) and returning the resulting value
 ```
 
 Obviously, you can start the contractvmd daemon from multiple nodes, creating a complex network; at the time there isn't a bootstraping mechanism (but it will be available soon), so when you start a new instance you have to specify a list of seed nodes.
