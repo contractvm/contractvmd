@@ -8,17 +8,21 @@ The quickinstall.sh will install kad.py, contractvmd, libcontractvmd with sample
 
 First, download and run the installation script:
 
-``` curl https://raw.githubusercontent.com/contractvm/contractvmd/master/quickinstall.sh | sh ```
+```shell
+curl https://raw.githubusercontent.com/contractvm/contractvmd/master/quickinstall.sh | sh
+```
 
 After the script execution, the contractvmd daemon and library should be installed.
 
 Now we can start a local instance of the daemon (this is necessary since there isn't a test network at the moment); we do this by typing:
 
-``` contractvmd --discard-old-blocks ```
+```shell
+contractvmd --discard-old-blocks
+```
 
 The default daemon instance includes all case studies dapps: blockstore, fifo-mom and tst, plus a dummy helloworld dapp. You can start a sample client application from samples directory of libcontractvm; in next lines we start the blockstore sample application:
 	
-```
+```shell
 cd ~/cvm-temp/libcontractvm/samples
 python3 bs_helloworld.py set
 # The sample app asks for a key-value pair, and it broadcasts the new pair in the network
