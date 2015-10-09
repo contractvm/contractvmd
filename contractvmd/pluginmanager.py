@@ -3,6 +3,8 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 import logging
+import imp
+import sys
 from colorlog import ColoredFormatter
 
 from . import config
@@ -16,11 +18,11 @@ class PluginManager:
 		self.dapps = {}
 
 	def load (self, pname, chain, db, dht, api):
-		classname = config.DAPPS[pname.upper ()]
+		logger.pluginfo ('Plugging dapp "%s"', pname.lower ())
 
-		logger.pluginfo ('Plugging dapp "%s"', pname.upper ())
-		exec ('from .' + pname.lower() + '.' + pname.lower() + 'plugin import ' + classname + 'Dapp')
-		pc = eval (classname+'Dapp')
+		sys.path.append(config.DATA_DIR + '/dapps/'+pname+'/dapp/')
+		dapp = imp.load_source (pname, config.DATA_DIR + '/dapps/'+pname+'/dapp/' + pname + '.py', open (config.DATA_DIR + '/dapps/'+pname+'/dapp/'+pname+'.py','r'))
+		pc = eval ('dapp.'+pname)
 
 		po = pc (chain, db.newNamespaceInstance (pname.upper () + '_'), dht, api)
 

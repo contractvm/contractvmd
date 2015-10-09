@@ -33,10 +33,10 @@ class DaemonRPC (Backend):
 		while True:
 			try:
 				if fail:
-					if not self.connect ():
-						logger.error ('Reconnecting in 10 seconds...')
-						time.sleep (10)
-						continue					
+					#if not self.connect ():
+					logger.error ('Reconnecting in 10 seconds...')
+					time.sleep (10)
+					continue					
 
 				payload = {
 					"method": command,
@@ -52,8 +52,8 @@ class DaemonRPC (Backend):
 				else:
 					return response
 			except:
-				logger.error ('Unable to connect. Retrying in 5 seconds...')
-				time.sleep (5)
+				#logger.error ('Unable to connect. Retrying in 5 seconds...')
+				#time.sleep (5)
 				fail = True
 				
 	def getChainCode (self):

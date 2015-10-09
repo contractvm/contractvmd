@@ -94,14 +94,16 @@ CHAINS = {
 	}
 
 
+#'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
+
+
 
 CONF = {
 	'chain': 'XLT',
 	'regtest': False,
 	'discard-old-blocks': False,
 	'maxpeers': 25,
-	'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
-	'dappsd': {
+	'dapps': {
 		'list': [],
 		'enabled': []
 	},

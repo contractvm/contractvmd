@@ -106,6 +106,10 @@ def main ():
 		f.close ()
 		logger.warning ('Configuration file %s created', config.DATA_DIR+'/'+config.APP_NAME+'.json')
 
+	try:
+		os.mkdirs (config.DATA_DIR + '/dapps/')
+	except:
+		pass
 
 	# Loading config file
 	f = open (config.DATA_DIR+'/'+config.APP_NAME+'.json', 'r')
@@ -204,9 +208,10 @@ def main ():
 	else:
 		aapi = None
 
+
 	# Load all dapps
-	for p in config.CONF['dapps']:
-		pm.load (p, ch, db, ddht, aapi)
+	for dapp in config.CONF['dapps']['enabled']:
+		pm.load (dapp, ch, db, ddht, aapi)
 
 
 	# Run the mainloop
