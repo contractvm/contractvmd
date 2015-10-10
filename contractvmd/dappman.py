@@ -8,16 +8,18 @@ import json
 import sys
 import os
 import getopt
+import requests
 
 from . import config
 
+DAPP_LIST_URL = "https://raw.githubusercontent.com/contractvm/dapp-list/master/list.json"
 
 def usage ():
 	print ('Usage:', sys.argv[0], '[option] action')
 	print ('Actions:')
-	print ('\t-s, --search=query\t\tsearch for a dapp')
+	#print ('\t-s, --search=query\t\tsearch for a dapp')
 	print ('\t-i, --install=url\t\tinstall a dapp by its git repository or by its name')
-	print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
+	#print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
 	print ('\t-r, --remove=name\t\tremove an installed dapp')
 	print ('\t-u, --update=name\t\tupdate an installed dapp')
 	print ('\t-l, --list\t\t\tlist installed dapps')
@@ -36,9 +38,18 @@ def save_conf (fpath, conf):
 	f.write (json.dumps (conf))
 	f.close ()
 
+def download_list ():
+	print ('Downloading dapps catalog...')
+	r = requests.get (DAPP_LIST_URL)
+	d = r.json ()['dapps']
+	print ('Dapps catalog contains', len (d), 'dapps')
+	return d
+
 def main ():
+	catalog = download_list ()
+
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "s:i:ii:r:lchd:v", ["help", "version", "search", "data=", "list", "install"])
+		opts, args = getopt.getopt(sys.argv[1:], "s:i:ii:r:lchd:vu:", ["update=", "help", "version", "search=", "data=", "list", "install="])
 	except getopt.GetoptError:
 		usage()
 		sys.exit(2)
@@ -53,7 +64,7 @@ def main ():
 	try:
 		f = open (config.DATA_DIR+'/'+config.APP_NAME+'.json', 'r')
 	except:
-		print ('cannot read configuration file:', config.DATA_DIR+'/'+config.APP_NAME+'.json')
+		print ('Cannot read configuration file:', config.DATA_DIR+'/'+config.APP_NAME+'.json')
 		sys.exit (0)
 	conf = json.loads (f.read ())
 	f.close ()
@@ -74,8 +85,43 @@ def main ():
 			print (config.APP_VERSION)
 			sys.exit ()
 
+
+		elif opt in ("-u", "--update"):
+			dapp = arg.lower ()
+			print ('Updating', dapp, '...')
+			os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && git pull')
+			os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && sudo pip3 install -r requirements.txt && sudo python3 setup.py install')
+			print (dapp, 'updated')
+			sys.exit (0)
+
+		elif opt in ("-r", "--remove"):
+			dapp = arg.lower ()
+			print ('Removing', dapp, '...')
+
+			try:
+				# shutils.rmtree (
+				os.system ('sudo rm -r ' + config.DATA_DIR + '/dapps/' + dapp)
+			except:
+				print ('Dapp' + dapp + 'doesn\'t exists')
+
+			if dapp in conf['dapps']['list']:
+				conf['dapps']['list'].remove (dapp)
+
+			if dapp in conf['dapps']['enabled']:
+				conf['dapps']['enabled'].remove (dapp)
+
+			save_conf (config.DATA_DIR + '/' + config.APP_NAME + '.json', conf)
+			print ('Dapp', dapp, 'successfully removed')
+			sys.exit (0)
+
+
 		elif opt in ("-i", "--install"):
-			print ('installing', arg, '...')
+			print ('Installing', arg, '...')
+			url = arg
+
+			for dapp in catalog:
+				if dapp['name'] == arg:
+					url = dapp['source']								
 
 			# Cleaning temp tree
 			try:
@@ -84,7 +130,7 @@ def main ():
 				pass
 
 			# Cloning
-			os.system ('git clone ' + arg + ' ' + config.DATA_DIR + '/dapps/temp')
+			os.system ('git clone ' + url + ' ' + config.DATA_DIR + '/dapps/temp')
 
 			manifest = {}
 			try:
@@ -92,20 +138,24 @@ def main ():
 				manifest = json.loads (f.read ())
 				f.close ()
 			except:
-				print ('no manifest.json or malformed manifest')
+				print ('No manifest.json or malformed manifest')
 				sys.exit ()
 
 			if not 'name' in manifest:
-				print ('no dapp name in manifest.json')
+				print ('No dapp name in manifest.json')
 				sys.exit ()
 
 			# Move the cloned repository
 			# Move the cloned repository
 			if os.path.isdir (config.DATA_DIR + '/dapps/' + manifest['name'].lower ()):
-				print ('dapp already installed, reinstalling')
-				shutil.rmtree (config.DATA_DIR + '/dapps/' + manifest['name'].lower ())
+				print ('Dapp already installed, reinstalling')
+				os.system ('sudo rm -r ' + config.DATA_DIR + '/dapps/' + manifest['name'].lower ())
+				#shutil.rmtree (
 
 			os.rename (config.DATA_DIR + '/dapps/temp/', config.DATA_DIR + '/dapps/' + manifest['name'].lower ())
+
+			# Install
+			os.system ('cd ' + config.DATA_DIR + '/dapps/' + manifest['name'].lower () + ' && sudo pip3 install -r requirements.txt && sudo python3 setup.py install')
 
 			# Config update
 			if not manifest['name'].lower () in conf['dapps']['list']:
@@ -120,13 +170,17 @@ def main ():
 
 			sys.exit ()
 
+
 		elif opt in ("-l", "--list"):
-			print ('installed dapps:')
+			print ('Installed dapps:')
 			for dapp in conf['dapps']['list']:
-				print (dapp)
-			print ('enabled dapps:')
+				print ('\t', dapp)
+			print ('Enabled dapps:')
 			for dapp in conf['dapps']['enabled']:
-				print (dapp)
+				print ('\t', dapp)
+			print ('Available:')
+			for dapp in catalog:
+				print ('\t', dapp['name'], '-', dapp['description'])
 			sys.exit ()
 
 	usage ()
