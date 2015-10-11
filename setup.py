@@ -16,6 +16,7 @@ setup(name='contractvm',
 		'console_scripts': [
 			'contractvmd=contractvmd.contractvmd:main',
 			'dappman=contractvmd.dappman:main',
+			'chainstarter=contractvmd.chainstarter:main'
 		],
 	},
 )
