@@ -20,9 +20,9 @@ class PluginManager:
 	def load (self, pname, chain, db, dht, api):
 		logger.pluginfo ('Plugging dapp "%s"', pname.lower ())
 
-		sys.path.append(config.DATA_DIR + '/dapps/'+pname+'/dapp/')
-		dapp = imp.load_source (pname, config.DATA_DIR + '/dapps/'+pname+'/dapp/' + pname + '.py', open (config.DATA_DIR + '/dapps/'+pname+'/dapp/'+pname+'.py','r'))
-		pc = eval ('dapp.'+pname)
+		#sys.path.append(config.DATA_DIR + '/dapps/'+pname+'/dapp/')
+		dapp = imp.load_source (pname, config.DATA_DIR + '/dapps/'+pname+'/dapp/__init__.py') # + pname + '.py', open (config.DATA_DIR + '/dapps/'+pname+'/dapp/'+pname+'.py','r'))
+		pc = eval ('dapp.'+pname+'.'+pname)
 
 		po = pc (chain, db.newNamespaceInstance (pname.upper () + '_'), dht, api)
 
