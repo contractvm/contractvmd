@@ -30,7 +30,7 @@ class PluginManager:
 		for m in rpcm:
 			api.registerRPCMethod (pname.lower () + '.' + m, rpcm[m])
 
-		self.dapps[po.Name] = po
+		self.dapps[pname.lower ()] = po
 
 
 

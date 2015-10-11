@@ -69,9 +69,9 @@ class Chain:
 
 
 		# Check data <=> metadata consistency
-		if message.Data['player'] != message.Player:
-			logger.error ('Different players between transaction and data (%s <> %s)', message.Data['player'], message.Player)
-			#return
+		#if message.Data['player'] != message.Player:
+		#	logger.error ('Different players between transaction and data (%s <> %s)', message.Data['player'], message.Player)
+		#	#return
 
 		if int (message.Data['method']) != int (message.Method):
 			logger.error ('Different method between transaction and data')

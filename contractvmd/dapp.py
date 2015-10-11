@@ -5,8 +5,7 @@
 from .proto import Protocol
 
 class Dapp:
-	def __init__ (self, name, dapp_code, methods, chain, database, dht, api = None):
-		self.Name = name
+	def __init__ (self, dapp_code, methods, chain, database, dht, api = None):
 		self.DappCode = dapp_code
 		self.Methods = methods
 		self.Database = database
