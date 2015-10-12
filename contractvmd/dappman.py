@@ -9,7 +9,8 @@ import sys
 import os
 import getopt
 import requests
-
+import urllib
+from zipfile import ZipFile
 from . import config
 
 DAPP_LIST_URL = "https://raw.githubusercontent.com/contractvm/dapp-list/master/list.json"
@@ -18,21 +19,20 @@ def usage ():
 	print ('Usage:', sys.argv[0], '[option] action')
 	print ('Actions:')
 	#print ('\t-s, --search=query\t\tsearch for a dapp')
-	print ('\t-i, --install=url\t\tinstall a dapp by its git repository or by its name')
+	print ('\t-i,\t--install=giturl\tinstall a dapp by its git repository')
+	print ('\t\t--install=path\t\tinstall a dapp from a local directory')
 	#print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
-	print ('\t-r, --remove=name\t\tremove an installed dapp')
-	print ('\t-u, --update=name\t\tupdate an installed dapp')
-	print ('\t-c, --reset=name\t\treset an installed dapp state')
-	print ('\t-l, --list\t\t\tlist installed dapps')
-	print ('\t-w, --create\t\t\tcreate a new empty dapp starting from a template')
-	print ('\t-h, --help\t\t\tthis help')
-	print ('\t-v, --version\t\t\tsoftware version')
+	print ('\t-r,\t--remove=name\t\tremove an installed dapp')
+	print ('\t-u,\t--update=name\t\tupdate an installed dapp')
+	print ('\t-c,\t--reset=name\t\treset an installed dapp state')
+	print ('\t-l,\t--list\t\t\tlist installed dapps')
+	print ('\t-w,\t--create\t\tcreate a new empty dapp starting from a template')
+	print ('\t-h,\t--help\t\t\tthis help')
+	print ('\t-v,\t--version\t\tsoftware version')
 	print ('')
 	print ('Options:')
-	print ('\t-d,--data=path\t\t\tspecify a custom data directory path \n\t\t\t\t\t(default: '+config.DATA_DIR+')')
+	print ('\t-d,\t--data=path\t\tspecify a custom data directory path \n\t\t\t\t\t(default: '+config.DATA_DIR+')')
 
-def create_wizard ():
-	name = raw_input ('Dapp name: ')
 
 def save_conf (fpath, conf):
 	f = open (fpath, 'w')
@@ -45,6 +45,87 @@ def download_list ():
 	d = r.json ()['dapps']
 	print ('Dapps catalog contains', len (d), 'dapps')
 	return d
+
+
+def create_wizard (catalog, conf):
+	name = input ('Dapp name: ').lower ()
+	description = input ('Description: ')
+	authors = input ('Authors (comma separated): ').split (',')
+
+	print ('Select a template:')
+	i = 0
+	for dapp in catalog:
+		print ('\t',i,'.',dapp['name'], '('+dapp['source']+')')
+		i += 1
+	
+	i = int (input ('Template: '))
+
+	if i < 0 or i >= len (catalog):
+		print ('Invalid template')
+		sys.exit (0)
+
+
+	print ('Creating directory for dapp:', name)
+	try:
+		os.mkdir (name)		
+	except:
+		print ('Directory',name,'exists')
+		r = input ('Remove old directory (y/n)? ').lower()
+		if r == 'y':
+			shutil.rmtree (name)
+			os.mkdir (name)
+		else:
+			print ('Exiting')
+			sys.exit (0)
+
+	print ('Downloading template:', catalog[i]['name'])
+	testfile = urllib.request.urlretrieve(catalog[i]['source'] + '/archive/master.zip', catalog[i]['name']+'_template.zip')
+	
+	print ('Extracting template')
+	with ZipFile(catalog[i]['name']+'_template.zip') as myzip:
+		myzip.extractall (path=name)
+		myzip.close ()
+
+	print ('Setting up directories')
+	nd = os.listdir (name)[0]
+	for f in os.listdir (name + '/' + nd):
+		shutil.move (name + '/' + nd + '/' + f, name + '/')
+	shutil.rmtree (name + '/' + nd)
+
+	print ('String replace for dapp name')
+	shutil.move (name + '/dapp/' + catalog[i]['name'] + '.py', name + '/dapp/' + name + '.py')
+	f = open (name + '/dapp/' + name + '.py', 'r')
+	d = f.read ().replace (catalog[i]['name'], name)
+	f.close ()
+	f = open (name + '/dapp/' + name + '.py', 'w')
+	f.write (d)
+	f.close ()
+
+	f = open (name + '/dapp/__init__.py', 'r')
+	d = f.read ().replace (catalog[i]['name'], name)
+	f.close ()
+	f = open (name + '/dapp/__init__.py', 'w')
+	f.write (d)
+	f.close ()
+
+	shutil.move (name + '/library/' + catalog[i]['name'], name + '/library/' + name)
+
+	f = open (name + '/setup.py', 'r')
+	d = f.read ().replace (catalog[i]['name'], name)
+	f.close ()
+	f = open (name + '/setup.py', 'w')
+	f.write (d)
+	f.close ()
+
+	print ('Creating manifest.json')
+	manifest = { "name": name, "version": "0.0.1", "description": description, "authors": authors }
+	f = open (name + '/manifest.json', 'w')
+	f.write (json.dumps (manifest))
+	f.close ()
+
+	print ('Dapp', name, 'sucessfully created')
+	print ('You can now install your local dapp by typing: dappman -i',os.getcwd())
+	
 
 def main ():
 	catalog = download_list ()
@@ -82,6 +163,11 @@ def main ():
 			usage ()
 			sys.exit ()
 
+		elif opt in ("-w", "--create"):
+			create_wizard (catalog, conf)
+			sys.exit ()
+			
+
 		elif opt in ("-v", "--version"):
 			print (config.APP_VERSION)
 			sys.exit ()
@@ -95,6 +181,7 @@ def main ():
 					if f[0:6] == 'state_' and f[-3:] == 'dat' and f[6:6+len(dapp)] == dapp:
 							os.remove (config.DATA_DIR + '/dapps/' + f)
 							print ('Deleted', f)
+				print ('State of', dapp, 'successfully reset')
 
 			sys.exit (0)
 
@@ -144,8 +231,12 @@ def main ():
 			except:
 				pass
 
-			# Cloning
-			os.system ('git clone ' + url + ' ' + config.DATA_DIR + '/dapps/temp')
+			# Local dapp
+			if os.path.isdir (arg):
+				shutil.copytree (arg, config.DATA_DIR + '/dapps/temp')
+			# Git cloning
+			else:
+				os.system ('git clone ' + url + ' ' + config.DATA_DIR + '/dapps/temp')
 
 			manifest = {}
 			try:
