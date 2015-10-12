@@ -182,16 +182,19 @@ def main ():
 
 
 	# Start the DHT
-	ddht = dht.DHT (int (config.CONF['dht']['port']), config.CONF['dht']['seeds'], config.DATA_DIR+'/dht_'+config.CONF['chain']+'.dat', {'api_port': config.CONF['api']['port']})
-	ddht.run ()
-	#logger.info ('DHT initialized')
-	#print ('DHT',ddht.identity ())
+	try:
+		ddht = dht.DHT (int (config.CONF['dht']['port']), config.CONF['dht']['seeds'], config.DATA_DIR+'/dht_'+config.CONF['chain']+'.dat', {'api_port': config.CONF['api']['port']})
+		ddht.run ()
+		logger.info ('DHT initialized with identity: ' + str (ddht.identity ()))
+	except Exception as e:
+		logger.critical ('Exception while initializing kademlia DHT')
+		logger.critical (e)
+		sys.exit (0)
 
 
 	# Load the state db
 	db = database.Database (config.DATA_DIR+'/db_'+config.CONF['chain']+ ('_regtest' if config.CONF['regtest'] else '') + '.dat')
 	logger.info ('Database %s initialized', 'db_'+config.CONF['chain']+ ('_regtest' if config.CONF['regtest'] else '') + '.dat')
-
 
 
 	# Load the plugin engine
@@ -211,8 +214,11 @@ def main ():
 
 	# Load all dapps
 	for dapp in config.CONF['dapps']['enabled']:
-		pm.load (dapp, ch, db, ddht, aapi)
-
+		try:
+			pm.load (dapp, ch, db, ddht, aapi)
+		except Exception as e:
+			logger.critical ('Exception while loading dapp: ' + dapp)
+			logger.critical (e)
 
 	# Run the mainloop
 	logger.info ('Chain initialized, starting the main loop')

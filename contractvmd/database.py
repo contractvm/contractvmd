@@ -17,23 +17,16 @@ logger = logging.getLogger(config.APP_NAME)
 # Database abstraction layer
 class Database:
 	def __init__ (self, f):
-		#self.db = leveldb.LevelDB (f)
 		self.shelve = shelve.open (f)
-		self.namespace = ''
 
 	def close (self):
 		self.shelve.close ()
 
-
 	def sync (self):
 		self.shelve.sync ()
 
-
-	# Create a new deep copy of the object, with a different namespace
-	def newNamespaceInstance (self, namespace):
-		no = copy.copy (self)
-		no.namespace = namespace
-		return no
+	def new (path):
+		return Database (path)
 
 
 	# Raw operations
@@ -67,18 +60,18 @@ class Database:
 
 	# General operations
 	def exists (self, key):
-		return self._exists (self.namespace + key)
+		return self._exists (key)
 
 	def get (self, key):
-		return self._get (self.namespace + key)
+		return self._get (key)
 
 	def set (self, key, dictobj):
-		self._set (self.namespace + key, dictobj)
+		self._set (key, dictobj)
 		self.sync ()
 
 	def delete (self, key):
-		if self.exists (self.namespace + key):
-			self._delete (self.namespace + key)
+		if self.exists (key):
+			self._delete (key)
 			self.sync ()
 
 

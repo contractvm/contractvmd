@@ -7,6 +7,7 @@ import imp
 import sys
 from colorlog import ColoredFormatter
 
+from .database import Database
 from . import config
 
 logger = logging.getLogger(config.APP_NAME)
@@ -20,12 +21,11 @@ class PluginManager:
 	def load (self, pname, chain, db, dht, api):
 		logger.pluginfo ('Plugging dapp "%s"', pname.lower ())
 
-		#sys.path.append(config.DATA_DIR + '/dapps/'+pname+'/dapp/')
-		dapp = imp.load_source (pname, config.DATA_DIR + '/dapps/'+pname+'/dapp/__init__.py') # + pname + '.py', open (config.DATA_DIR + '/dapps/'+pname+'/dapp/'+pname+'.py','r'))
+		dapp = imp.load_source (pname, config.DATA_DIR + '/dapps/' + pname + '/dapp/__init__.py')
 		pc = eval ('dapp.'+pname+'.'+pname)
+		po = pc (chain, Database.new (config.DATA_DIR + '/dapps/state_' + pname + '_' + chain.getChainCode () + '.dat'), dht, api)
 
-		po = pc (chain, db.newNamespaceInstance (pname.upper () + '_'), dht, api)
-
+		# Register API methods
 		rpcm = po.getAPI ().getRPCMethods ()
 		for m in rpcm:
 			api.registerRPCMethod (pname.lower () + '.' + m, rpcm[m])
@@ -39,6 +39,12 @@ class PluginManager:
 		for p in self.dapps:
 			if m.DappCode == self.dapps[p].DappCode:
 				logger.pluginfo ('Found handler %s for message %s from %s', p, m.Hash, m.Player)
-				return self.dapps[p].handleMessage (m)
+				try:					
+					return self.dapps[p].handleMessage (m)
+				except Exception as e:
+					logger.critical ('Exception from dapp ' + p + ' while handling a message')
+					logger.critical (e)
+					return None
+
 		logger.error ('Cannot handle message method %d for dapp %d', m.Method, m.DappCode)
 		return None

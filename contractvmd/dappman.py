@@ -22,8 +22,9 @@ def usage ():
 	#print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
 	print ('\t-r, --remove=name\t\tremove an installed dapp')
 	print ('\t-u, --update=name\t\tupdate an installed dapp')
+	print ('\t-c, --reset=name\t\treset an installed dapp state')
 	print ('\t-l, --list\t\t\tlist installed dapps')
-	print ('\t-c, --create\t\t\tcreate a new empty dapp starting from a template')
+	print ('\t-w, --create\t\t\tcreate a new empty dapp starting from a template')
 	print ('\t-h, --help\t\t\tthis help')
 	print ('\t-v, --version\t\t\tsoftware version')
 	print ('')
@@ -49,7 +50,7 @@ def main ():
 	catalog = download_list ()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "s:i:ii:r:lchd:vu:", ["update=", "help", "version", "search=", "data=", "list", "install="])
+		opts, args = getopt.getopt(sys.argv[1:], "s:i:k:r:lwhd:vu:c:", ["reset=", "update=", "help", "version", "search=", "data=", "list", "install="])
 	except getopt.GetoptError:
 		usage()
 		sys.exit(2)
@@ -85,6 +86,18 @@ def main ():
 			print (config.APP_VERSION)
 			sys.exit ()
 
+		elif opt in ("-c", "--reset"):
+			dapp = arg.lower ()
+			print ('Resetting state of', dapp)
+			r = input ('Are you sure (y/n)? ').lower ()
+			if r == 'y':
+				for f in os.listdir (config.DATA_DIR + '/dapps/'):
+					if f[0:6] == 'state_' and f[-3:] == 'dat' and f[6:6+len(dapp)] == dapp:
+							os.remove (config.DATA_DIR + '/dapps/' + f)
+							print ('Deleted', f)
+
+			sys.exit (0)
+
 
 		elif opt in ("-u", "--update"):
 			dapp = arg.lower ()
@@ -93,6 +106,7 @@ def main ():
 			os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && sudo pip3 install -r requirements.txt && sudo python3 setup.py install')
 			print (dapp, 'updated')
 			sys.exit (0)
+
 
 		elif opt in ("-r", "--remove"):
 			dapp = arg.lower ()
@@ -112,6 +126,7 @@ def main ():
 
 			save_conf (config.DATA_DIR + '/' + config.APP_NAME + '.json', conf)
 			print ('Dapp', dapp, 'successfully removed')
+			print ('State is preserved')
 			sys.exit (0)
 
 
