@@ -3,6 +3,7 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+import time
 import json
 import sys
 import os
@@ -17,9 +18,15 @@ from .backend import daemonrpc, chainsoapi
 
 logger = logging.getLogger(config.APP_NAME)
 
-def signal_handler(signal, frame):
+
+def signal_handler (sig, frame):
 	logger.critical ('Exiting...')
+	f = open (config.DATA_DIR + '/pid', 'r')
+	cpid = f.read ()
+	f.close ()
+	os.kill (int (cpid), signal.SIGKILL)
 	sys.exit (0)
+
 
 def usage ():
 	print ('Usage:',sys.argv[0],'[OPTIONS]\n')
@@ -31,47 +38,20 @@ def usage ():
 	print ('\t-d,--daemon\t\t\trun the software as daemon')
 	print ('\t-c,--chain=chainname\t\tblock-chain', '['+(', '.join (map (lambda x: "'"+x+"'", config.CHAINS)))+']')
 	print ('\t-b,--backend=protocol\t\tbackend protocol', str(config.BACKEND_PROTOCOLS))
-	print ('\t-p,--port=port\t\tdht port')
-	print ('\t-a,--api=bool\t\tdisable or enable api framework')
-	print ('\t--api-port=port\t\tset an api port')
+	print ('\t-p,--port=port\t\t\tdht port')
+	print ('\t-a,--api=bool\t\t\tdisable or enable api framework')
+	print ('\t--api-port=port\t\t\tset an api port')
 	print ('\t-s,--seed=host:port\t\tset a dht seed peer')
 	print ('\t--discard-old-blocks\t\tdiscard old blocks')
 
+	print ('\nDaemon commands:')
+	print ('\t--restart\t\t\trestart the contractvmd instance')
+	print ('\t--stop\t\t\t\tstop the contractvmd instance')
 
-def main ():
-	signal.signal(signal.SIGINT, signal_handler)
-	signal.signal(signal.SIGQUIT, signal_handler)
-	logger.setLevel (60-config.VERBOSE*10)
+
+
+def core (opts, args):
 	logger.info ('Starting %s %s', config.APP_NAME, config.APP_VERSION)
-
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hv:VD:c:b:t:a:sp", ["discard-old-blocks", "help", "verbose=", "version", "data=", "daemon", "chain=", "backend=", "api-port=", "api=", "regtest", "seed=", "port="])
-
-	except getopt.GetoptError:
-		usage()
-		sys.exit(2)
-
-	# Parse arguments
-	for opt, arg in opts:
-		if opt in ("-h", "--help"):
-			usage ()
-			sys.exit ()
-
-		elif opt in ("-V", "--version"):
-			print (config.APP_VERSION)
-			sys.exit ()
-
-		elif opt in ("-D", "--data"):
-			config.DATA_DIR = os.path.expanduser (arg)
-
-		elif opt in ("-v", "--verbose"):
-			config.VERBOSE = int (arg)
-
-
-		elif opt in ("-d", "--daemon"):
-			logger.critical ('Daemon is not yet implemented')
-			sys.exit ()
-
 
 	# Set debug level
 	logger.setLevel (60-config.VERBOSE*10)
@@ -224,6 +204,86 @@ def main ():
 	logger.info ('Chain initialized, starting the main loop')
 	ch.run ()
 
+
+
+def main ():
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "hv:VD:c:b:t:a:sp", ["stop", "restart", "discard-old-blocks", "help", "verbose=", "version", "data=", "daemon", "chain=", "backend=", "api-port=", "api=", "regtest", "seed=", "port="])
+
+	except getopt.GetoptError:
+		usage()
+		sys.exit(2)
+
+	# Parse arguments
+	for opt, arg in opts:
+		if opt in ("-h", "--help"):
+			usage ()
+			sys.exit ()
+
+		elif opt in ("-V", "--version"):
+			print (config.APP_VERSION)
+			sys.exit ()
+
+		elif opt in ("-D", "--data"):
+			config.DATA_DIR = os.path.expanduser (arg)
+
+		elif opt in ("-v", "--verbose"):
+			config.VERBOSE = int (arg)
+
+		elif opt in ("-d", "--daemon"):
+			logger.critical ('Daemon is not yet implemented')
+			sys.exit ()
+
+		elif opt in ("--restart"):
+			print ('Restarting...')
+
+			f = open (config.DATA_DIR + '/pid', 'r')
+			cpid = f.read ()
+			f.close ()
+			os.kill (int (cpid), signal.SIGUSR1)
+			sys.exit (0)
+
+		elif opt in ("--stop"):
+			print ('Stop...')
+
+			f = open (config.DATA_DIR + '/pid', 'r')
+			cpid = f.read ()
+			f.close ()
+			os.kill (int (cpid), signal.SIGKILL)
+			sys.exit (0)
+
+
+	f = open (config.DATA_DIR + '/pid', 'r')
+	cpid = f.read ()
+	f.close ()			
+	try:
+		os.kill (int (cpid), signal.SIGKILL)
+		logger.critical ('Already running, killed: ' + str (cpid))
+	except:
+		pass
+
+	run = True
+	while run:
+		pid = os.fork ()
+
+		if pid != 0:
+			signal.signal(signal.SIGINT, signal_handler)
+			signal.signal(signal.SIGQUIT, signal_handler)
+
+			logger.critical ('Started: ' + str (pid))
+
+			f = open (config.DATA_DIR + '/pid', 'w')
+			f.write (str(pid))
+			f.close ()
+
+			r = os.waitpid (int (pid), 0)
+			logger.critical ('Stopped: ' + str (r[0]))
+
+			if r[1] == signal.SIGKILL:
+				run = False
+		else:
+			core (opts, args)
+			sys.exit (0)
 
 if __name__ == "__main__":
 	main ()
