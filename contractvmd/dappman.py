@@ -15,6 +15,10 @@ from . import config
 
 DAPP_LIST_URL = "https://raw.githubusercontent.com/contractvm/dapp-list/master/list.json"
 
+def restart_daemon ():
+	os.system ('contractvmd --restart')
+
+
 def usage ():
 	print ('Usage:', sys.argv[0], '[option] action')
 	print ('Actions:')
@@ -182,8 +186,9 @@ def main ():
 					if f[0:6] == 'state_' and f[-3:] == 'dat' and f[6:6+len(dapp)] == dapp:
 							os.remove (config.DATA_DIR + '/dapps/' + f)
 							print ('Deleted', f)
+				restart_daemon ()
 				print ('State of', dapp, 'successfully reset')
-
+				
 			sys.exit (0)
 
 
@@ -192,6 +197,7 @@ def main ():
 			print ('Updating', dapp, '...')
 			os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && git pull')
 			os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && sudo pip3 install -r requirements.txt && sudo python3 setup.py install')
+			restart_daemon ()
 			print (dapp, 'updated')
 			sys.exit (0)
 
@@ -213,6 +219,7 @@ def main ():
 				conf['dapps']['enabled'].remove (dapp)
 
 			save_conf (config.DATA_DIR + '/' + config.APP_NAME + '.json', conf)
+			restart_daemon ()
 			print ('Dapp', dapp, 'successfully removed')
 			print ('State is preserved')
 			sys.exit (0)
@@ -273,6 +280,7 @@ def main ():
 
 			save_conf (config.DATA_DIR + '/' + config.APP_NAME + '.json', conf)
 
+			restart_daemon ()
 			print (manifest['name'], 'is now installed')
 
 			sys.exit ()

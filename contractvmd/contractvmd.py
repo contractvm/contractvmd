@@ -235,21 +235,27 @@ def main ():
 			sys.exit ()
 
 		elif opt in ("--restart"):
-			print ('Restarting...')
+			print ('Restarting daemon...')
 
 			f = open (config.DATA_DIR + '/pid', 'r')
 			cpid = f.read ()
 			f.close ()
-			os.kill (int (cpid), signal.SIGUSR1)
+			try:
+				os.kill (int (cpid), signal.SIGUSR1)
+			except:
+				print ('No running instance.')
 			sys.exit (0)
 
 		elif opt in ("--stop"):
-			print ('Stop...')
+			print ('Stopping daemon...')
 
 			f = open (config.DATA_DIR + '/pid', 'r')
 			cpid = f.read ()
 			f.close ()
-			os.kill (int (cpid), signal.SIGKILL)
+			try:
+				os.kill (int (cpid), signal.SIGKILL)
+			except:
+				print ('No running instance.')
 			sys.exit (0)
 
 
