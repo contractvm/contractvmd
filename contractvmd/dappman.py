@@ -21,6 +21,7 @@ def usage ():
 	#print ('\t-s, --search=query\t\tsearch for a dapp')
 	print ('\t-i,\t--install=giturl\tinstall a dapp by its git repository')
 	print ('\t\t--install=path\t\tinstall a dapp from a local directory')
+	print ('\t\t--install=name\t\tinstall a dapp from its catalog name')
 	#print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
 	print ('\t-r,\t--remove=name\t\tremove an installed dapp')
 	print ('\t-u,\t--update=name\t\tupdate an installed dapp')
