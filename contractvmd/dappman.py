@@ -125,7 +125,7 @@ def create_wizard (catalog, conf):
 	f.close ()
 
 	print ('Dapp', name, 'sucessfully created')
-	print ('You can now install your local dapp by typing: dappman -i',os.getcwd())
+	print ('You can now install your local dapp by typing: dappman -i',os.getcwd()+'/'+name)
 	
 
 def main ():
