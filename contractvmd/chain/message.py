@@ -58,7 +58,7 @@ class Message ():
 			temp_id = dht.prepare (data)
 
 			# Create opreturn
-			opret = Protocol.MAGIC_FLAG + chr (self.Protocol) + chr (self.DappCode) + chr (self.Method) + 'x' + datahash.decode ()
+			opret = Protocol.MAGIC_FLAG + chr (self.Protocol) + chr (self.DappCode[0]) + chr (self.DappCode[1]) + chr (self.Method) + datahash.decode ()
 			retscript = "OP_RETURN " + str (binascii.hexlify (opret.encode ('ascii')))[2:-1]
 
 			if len (retscript) > Protocol.STORAGE_OPRETURN_LIMIT:
@@ -101,8 +101,8 @@ class Message ():
 
 			# Grab metadata from transaction
 			m.Protocol = ord (data[len(Protocol.MAGIC_FLAG):len(Protocol.MAGIC_FLAG)+1])
-			m.DappCode = ord (data[len(Protocol.MAGIC_FLAG)+1:len(Protocol.MAGIC_FLAG)+2])
-			m.Method = ord (data[len(Protocol.MAGIC_FLAG)+2:len(Protocol.MAGIC_FLAG)+3])
+			m.DappCode = [ ord (data[len(Protocol.MAGIC_FLAG)+1:len(Protocol.MAGIC_FLAG)+2]), ord (data[len(Protocol.MAGIC_FLAG)+2:len(Protocol.MAGIC_FLAG)+3]) ]
+			m.Method = ord (data[len(Protocol.MAGIC_FLAG)+3:len(Protocol.MAGIC_FLAG)+4])
 			m.Hash = tx.id ()
 			m.Block = blockn
 			m.DataHash = data[len(Protocol.MAGIC_FLAG)+4:len(Protocol.MAGIC_FLAG)+4+Protocol.DATA_HASH_SIZE].encode ('ascii')
