@@ -258,11 +258,18 @@ def main ():
 				print ('No running instance.')
 			sys.exit (0)
 
+	# Check if the data-dir exists
+	if not os.path.isdir (config.DATA_DIR):
+		logger.warning ('Directory %s not present', config.DATA_DIR)
+		os.mkdir (config.DATA_DIR)
+		logger.warning ('Directory %s created', config.DATA_DIR)
 
-	f = open (config.DATA_DIR + '/pid', 'r')
-	cpid = f.read ()
-	f.close ()			
+
 	try:
+		f = open (config.DATA_DIR + '/pid', 'r')
+		cpid = f.read ()
+		f.close ()			
+	
 		os.kill (int (cpid), signal.SIGKILL)
 		logger.critical ('Already running, killed: ' + str (cpid))
 	except:

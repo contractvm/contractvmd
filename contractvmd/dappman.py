@@ -152,6 +152,7 @@ def main ():
 		f = open (config.DATA_DIR+'/'+config.APP_NAME+'.json', 'r')
 	except:
 		print ('Cannot read configuration file:', config.DATA_DIR+'/'+config.APP_NAME+'.json')
+		print ('You have to run contractvmd for the first time.')
 		sys.exit (0)
 	conf = json.loads (f.read ())
 	f.close ()
