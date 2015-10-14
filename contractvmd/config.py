@@ -74,7 +74,7 @@ CHAINS = {
 			'code': 'XLT',
 			'base_fee': 450000,
 			'genesis_block': "",
-			'genesis_height': 593598,
+			'genesis_height': 706293,
 			'name': networks.full_network_name_for_netcode ('XLT')
 		},
 		'LTC' : {

@@ -163,7 +163,7 @@ def core (opts, args):
 
 	# Start the DHT
 	try:
-		ddht = dht.DHT (int (config.CONF['dht']['port']), config.CONF['dht']['seeds'], config.DATA_DIR+'/dht_'+config.CONF['chain']+'.dat', {'api_port': config.CONF['api']['port']})
+		ddht = dht.DHT (int (config.CONF['dht']['port']), seedlist=config.CONF['dht']['seeds'], dhtfile=config.DATA_DIR+'/dht_'+config.CONF['chain']+'.dat', info=config.CONF['api']['port'])
 		ddht.run ()
 		logger.info ('DHT initialized with identity: ' + str (ddht.identity ()))
 	except Exception as e:

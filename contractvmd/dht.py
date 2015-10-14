@@ -7,8 +7,7 @@ import logging
 import random
 import kad
 import threading
-from threading import Thread
-from threading import Lock
+from threading import Thread, Lock, Timer
 
 from . import config
 
@@ -29,10 +28,10 @@ class DHT:
 
 			if len (peer) == 2:
 				self.seeds.append ((peer[0], int (peer[1])))
-				#logger.debug ('Binding peer (%s:%d)', peer[0], peer[1])
-			else:
-				self.seeds.append ((peer[0], port))
-				#logger.debug ('Binding peer (%s:%d)', peer[0], port)
+				logger.debug ('Binding peer (%s:%d)', peer[0], int (peer[1]))
+			#else:
+			#	self.seeds.append ((peer[0], port))
+			#	logger.debug ('Binding peer (%s:%d)', peer[0], port)
 
 
 	# Temp data
@@ -90,14 +89,18 @@ class DHT:
 		self.dht.get (key, lambda d: handler (handlerdata, d))
 
 	def bootstrap (self):
-		self.dht = kad.DHT ('localhost', int (self.port), storage=self.storage, info=self.info)
+		self.dht = kad.DHT ('localhost', int (self.port), storage=self.storage, info=str (self.info))
 
 		self.dht.bootstrap (self.seeds)
 		self.startServiceThread ()
+
+
 
 	def peers (self):
 		return self.dht.peers ()
 
 	def serviceThread (self):
 		while True:
-			time.sleep (10)
+			time.sleep (20)
+			logger.debug ('Discovering nodes, %d total', len (self.peers ()))
+			self.dht.bootstrap ()

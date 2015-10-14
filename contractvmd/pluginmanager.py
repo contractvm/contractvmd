@@ -46,5 +46,5 @@ class PluginManager:
 					logger.critical (e)
 					return None
 
-		logger.error ('Cannot handle message method %d for dapp %d', m.Method, m.DappCode)
+		logger.error ('Cannot handle message method %d for dapp %s', m.Method, str (m.DappCode))
 		return None

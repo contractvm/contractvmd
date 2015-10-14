@@ -12,7 +12,7 @@ mkdir -p ~/cvm-temp/
 cd ~/cvm-temp/
 git clone git@github.com:contractvm/kad.py.git
 cd kad.py
-git checkout 9e98d377fa228bf6938b57d522c15e6ca699ce27
+#git checkout 9e98d377fa228bf6938b57d522c15e6ca699ce27
 sudo pip3 install -r requirements.txt
 sudo python3 setup.py install
 
