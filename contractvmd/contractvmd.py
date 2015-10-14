@@ -41,7 +41,7 @@ def usage ():
 	print ('\t-p,--port=port\t\t\tdht port')
 	print ('\t-a,--api=bool\t\t\tdisable or enable api framework')
 	print ('\t--api-port=port\t\t\tset an api port')
-	print ('\t-s,--seed=host:port,[host:port]\tset a contractvm seed peer list')
+	print ('\t-s,--seed=host:port,[host:port]\tset a contractvm seed nodes list')
 	print ('\t--discard-old-blocks\t\tdiscard old blocks')
 
 	print ('\nDaemon commands:')
