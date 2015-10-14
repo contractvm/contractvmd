@@ -4,10 +4,11 @@
 
 from setuptools import find_packages
 from setuptools import setup
+from contractvmd import config
 
 setup(name='contractvm',
-	version='0.1',
-	description='ContractVM daemon',
+	version=config.APP_VERSION,
+	description='A general-purpose framework for decentralized applications',
 	author='Davide Gessa',
 	setup_requires='setuptools',
 	author_email='gessadavide@gmail.com',
