@@ -1,10 +1,10 @@
 # Contractvm
-The contractVM daemon implementation. This is still a wip project, then the installation process could be a bit trivial. Anyway, a quick install script for ubuntu is available in this repository.
+The contractVM daemon implementation. A quick install script for linux is available in this repository.
 
 Documentation: http://contractvm.github.io/doc
 
 
-## Quick installation
+## Quick start
 
 The quickinstall.sh will install kad.py, contractvmd, libcontractvmd with sample dapps and all required dependencies.
 
