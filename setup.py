@@ -20,4 +20,5 @@ setup(name='contractvm',
 			'chainstarter=contractvmd.chainstarter:main'
 		],
 	},
+	install_requires=open ('requirements.txt', 'r').read ().split ('\n')
 )

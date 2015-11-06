@@ -43,7 +43,7 @@ def app_data_path (appauthor, appname, roaming=True):
 
 
 VERBOSE = 5
-APP_VERSION = '0.6'
+APP_VERSION = '0.6.1'
 APP_NAME = 'contractvm'
 APP_AUTHOR = 'Davide Gessa'
 DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)
@@ -110,7 +110,7 @@ CONF = {
 	'backend': {
 		'protocol': ['rpc', 'chainsoapi'],
 		'rpc': {
-			'host': '82.196.1.65',
+			'host': '51.254.215.160',
 			'port':'8080',
 			'user':'test',
 			'password': 'testpass',

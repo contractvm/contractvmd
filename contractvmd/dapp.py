@@ -30,6 +30,10 @@ class API:
 	def getRPCMethods (self):
 		return self.rpcmethods
 
+	def createTransactionResponse (self, message):
+		[datahash, outscript, tempid] = message.toOutputScript (self.dht)
+		return { "outscript": outscript, "datahash": datahash, "tempid": tempid, "fee": Protocol.estimateFee (self.core.getChainCode ()) }
+
 	def createErrorResponse (self, error):
 		if error in self.errors:
 			return { 'error': self.errors[error]['code'], 'message': self.errors[error]['message'] }
@@ -42,7 +46,7 @@ class Core:
 		self.chain = chain
 		self.database = database
 
-	
+
 	# Get the current time, or time of an arbitrary block-height
 	def getTime (self, height=None):
 		if height != None:

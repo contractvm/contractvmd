@@ -29,15 +29,8 @@ class DaemonRPC (Backend):
 
 
 	def _rpc (self, command, args = []):
-		fail = False
 		while True:
 			try:
-				if fail:
-					#if not self.connect ():
-					logger.error ('Reconnecting in 10 seconds...')
-					time.sleep (10)
-					continue					
-
 				payload = {
 					"method": command,
 					"params": args,
@@ -51,11 +44,11 @@ class DaemonRPC (Backend):
 					time.sleep (5)
 				else:
 					return response
-			except:
-				#logger.error ('Unable to connect. Retrying in 5 seconds...')
-				#time.sleep (5)
-				fail = True
-				
+			except Exception as e:
+				logger.error ('Unable to connect. Retrying in 5 seconds...')
+				time.sleep (5)
+
+
 	def getChainCode (self):
 		responseh = self._rpc ("help")['result']
 		response = self._rpc ("getinfo")
@@ -77,7 +70,7 @@ class DaemonRPC (Backend):
 			else:
 				return 'DOGE'
 		return 'UNK'
-		
+
 
 	def connect (self):
 		try:
@@ -85,7 +78,7 @@ class DaemonRPC (Backend):
 			if code == self.chain:
 				return True
 			else:
-				logger.critical ('Using rpc of wrong chain (%s <> %s)', code, self.chain)		
+				logger.critical ('Using rpc of wrong chain (%s <> %s)', code, self.chain)
 				return False
 		except:
 			return False
@@ -114,4 +107,3 @@ class DaemonRPC (Backend):
 	def getTransaction (self, txid):
 		response = self._rpc ("getrawtransaction", [txid])
 		return response["result"]
-

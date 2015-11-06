@@ -51,6 +51,8 @@ def usage ():
 
 
 def core (opts, args):
+	firstrun = False
+
 	logger.info ('Starting %s %s', config.APP_NAME, config.APP_VERSION)
 
 	# Set debug level
@@ -62,7 +64,7 @@ def core (opts, args):
 		logger.warning ('Directory %s not present', config.DATA_DIR)
 		os.mkdir (config.DATA_DIR)
 		logger.warning ('Directory %s created', config.DATA_DIR)
-
+		firstrun = True
 
 	# Check if temp dir exists
 	if not os.path.isdir (config.DATA_DIR + config.TEMP_DIR_RELATIVE):
@@ -125,6 +127,9 @@ def core (opts, args):
 		logger.critical ('Unable to start %s on chain \'%s\'', config.APP_NAME, config.CONF['chain'])
 		sys.exit (0)
 
+	# If firstrun, discard old blocks
+	if firstrun:
+		config.CONF['discard-old-blocks'] = True
 
 	# Start the backend
 	be = None
