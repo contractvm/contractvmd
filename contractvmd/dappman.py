@@ -29,6 +29,7 @@ def usage ():
 	#print ('\t-ii, --info=url\t\t\treturn informations about a dapp')
 	print ('\t-r,\t--remove=name\t\tremove an installed dapp')
 	print ('\t-u,\t--update=name\t\tupdate an installed dapp')
+	print ('\t-U\t\t\t\tupdate all dapps')
 	print ('\t-c,\t--reset=name\t\treset an installed dapp state')
 	print ('\t-l,\t--list\t\t\tlist installed dapps')
 	print ('\t-w,\t--create\t\tcreate a new empty dapp starting from a template')
@@ -62,7 +63,7 @@ def create_wizard (catalog, conf):
 	for dapp in catalog:
 		print ('\t',i,'.',dapp['name'], '('+dapp['source']+')')
 		i += 1
-	
+
 	i = int (input ('Template: '))
 
 	if i < 0 or i >= len (catalog):
@@ -72,7 +73,7 @@ def create_wizard (catalog, conf):
 
 	print ('Creating directory for dapp:', name)
 	try:
-		os.mkdir (name)		
+		os.mkdir (name)
 	except:
 		print ('Directory',name,'exists')
 		r = input ('Remove old directory (y/n)? ').lower()
@@ -85,7 +86,7 @@ def create_wizard (catalog, conf):
 
 	print ('Downloading template:', catalog[i]['name'])
 	testfile = urllib.request.urlretrieve(catalog[i]['source'] + '/archive/master.zip', catalog[i]['name']+'_template.zip')
-	
+
 	print ('Extracting template')
 	with ZipFile(catalog[i]['name']+'_template.zip') as myzip:
 		myzip.extractall (path=name)
@@ -130,17 +131,14 @@ def create_wizard (catalog, conf):
 
 	print ('Dapp', name, 'sucessfully created')
 	print ('You can now install your local dapp by typing: dappman -i',os.getcwd()+'/'+name)
-	
+
 
 def main ():
-	catalog = download_list ()
-
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "s:i:k:r:lwhd:vu:c:", ["reset=", "update=", "help", "version", "search=", "data=", "list", "install="])
+		opts, args = getopt.getopt(sys.argv[1:], "s:i:k:r:lwhd:vu:c:U", ["reset=", "update=", "update-all", "help", "version", "search=", "data=", "list", "install="])
 	except getopt.GetoptError:
 		usage()
 		sys.exit(2)
-
 
 	# Parse options
 	for opt, arg in opts:
@@ -170,9 +168,10 @@ def main ():
 			sys.exit ()
 
 		elif opt in ("-w", "--create"):
+			catalog = download_list ()
 			create_wizard (catalog, conf)
 			sys.exit ()
-			
+
 
 		elif opt in ("-v", "--version"):
 			print (config.APP_VERSION)
@@ -189,7 +188,16 @@ def main ():
 							print ('Deleted', f)
 				restart_daemon ()
 				print ('State of', dapp, 'successfully reset')
-				
+
+			sys.exit (0)
+
+		elif opt in ("-U", "--update-all"):
+			for dapp in conf['dapps']['list']:
+				print ('Updating', dapp, '...')
+				os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && git pull')
+				os.system ('cd ' + config.DATA_DIR + '/dapps/' + dapp + ' && sudo pip3 install -r requirements.txt && sudo python3 setup.py install')
+				print (dapp, 'updated')
+			restart_daemon ()
 			sys.exit (0)
 
 
@@ -227,12 +235,13 @@ def main ():
 
 
 		elif opt in ("-i", "--install"):
+			catalog = download_list ()
 			print ('Installing', arg, '...')
 			url = arg
 
 			for dapp in catalog:
 				if dapp['name'] == arg:
-					url = dapp['source']								
+					url = dapp['source']
 
 			# Cleaning temp tree
 			try:
@@ -288,6 +297,7 @@ def main ():
 
 
 		elif opt in ("-l", "--list"):
+			catalog = download_list ()
 			print ('Installed dapps:')
 			for dapp in conf['dapps']['list']:
 				print ('\t', dapp)
