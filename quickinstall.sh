@@ -10,7 +10,7 @@ echo "Installing kad.py"
 sudo rm -rf ~/cvm-temp/
 mkdir -p ~/cvm-temp/
 cd ~/cvm-temp/
-git clone git@github.com:contractvm/kad.py.git
+git clone https://github.com/contractvm/kad.py.git
 cd kad.py
 sudo pip3 install -r requirements.txt
 sudo python3 setup.py install
@@ -18,7 +18,7 @@ sudo python3 setup.py install
 
 echo "Installing contractvm"
 cd ~/cvm-temp/
-git clone git@github.com:contractvm/contractvmd
+git clone https://github.com/contractvm/contractvmd
 cd contractvmd
 
 echo "Installing requirements..."
@@ -29,7 +29,7 @@ sudo python3 setup.py install
 
 echo "Installing contractvm-library"
 cd ~/cvm-temp/
-git clone git@github.com:contractvm/libcontractvm
+git clone https://github.com/contractvm/libcontractvm
 cd libcontractvm
 
 echo "Installing requirements..."
