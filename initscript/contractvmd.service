@@ -1,0 +1,8 @@
+[Unit]
+Description=Contractvmd daemon
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "/usr/local/bin/contractvmd"
+ExecStop=/bin/sh -c "/usr/local/bin/contractvmd --stop"
+RemainAfterExit=yes
