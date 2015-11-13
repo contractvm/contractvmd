@@ -89,7 +89,7 @@ class DHT:
 		self.dht.get (key, lambda d: handler (handlerdata, d))
 
 	def bootstrap (self):
-		self.dht = kad.DHT ('localhost', int (self.port), storage=self.storage, info=str (self.info))
+		self.dht = kad.DHT ('', int (self.port), storage=self.storage, info=str (self.info))
 
 		self.dht.bootstrap (self.seeds)
 		self.startServiceThread ()
