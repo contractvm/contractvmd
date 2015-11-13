@@ -87,6 +87,7 @@ def core (opts, args):
 		f.write (json.dumps (config.CONF, indent=4, separators=(',', ': ')))
 		f.close ()
 		logger.warning ('Configuration file %s created', config.DATA_DIR+'/'+config.APP_NAME+'.json')
+		firstrun = True
 
 	try:
 		os.mkdirs (config.DATA_DIR + '/dapps/')
@@ -121,6 +122,7 @@ def core (opts, args):
 			config.CONF['api']['port'] = int (arg)
 		elif opt in ("--discard-old-blocks"):
 			config.CONF['discard-old-blocks'] = True
+
 
 	# Check for chain
 	if not config.CONF['chain'] in config.CHAINS:
@@ -280,6 +282,10 @@ def main ():
 	except:
 		pass
 
+	#logger.addHandler (logging.FileHandler (config.DATA_DIR + '/contractvmd.log'))
+	#logger.info ('Logging to', config.DATA_DIR + '/contractvmd.log')
+
+	
 	run = True
 	while run:
 		pid = os.fork ()
