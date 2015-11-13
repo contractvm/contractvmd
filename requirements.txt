@@ -5,3 +5,4 @@ base58
 pycoin
 lxml
 kad.py
+requests
