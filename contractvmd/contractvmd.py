@@ -13,7 +13,7 @@ import signal
 
 from . import config, dht, database, pluginmanager, api
 from .chain import chain
-from .backend import daemonrpc, chainsoapi
+from .backend import daemonrpc, chainsoapi, node
 
 
 logger = logging.getLogger(config.APP_NAME)
@@ -159,9 +159,20 @@ def core (opts, args):
 				logger.critical ('Backend protocol %s is only available with %s networks, falling back',
 					config.CONF['backend']['protocol'], str (chainsoapi.ChainSoAPI.getSupportedChains ()))
 				be = None
+
+		elif cbe == 'node':
+			c = config.CHAINS[config.CONF['chain']]
+			be = node.Node (config.CONF['chain'], config.DATA_DIR+'/proto_'+config.CONF['chain']+'.dat', (c['genesis_block'], c['genesis_height']))
+			if be.connect ():
+				logger.info ('Backend protocol %s initialized', cbe)
+			else:
+				logger.critical ('Unable to enstablish a protocoin daemon, falling back')
+				be = None
+
 		else:
 			logger.critical ('Unable to handle the backend protocol %s, falling back', cbe)
 			be = None
+
 
 	if be == None:
 		logger.critical ('Cannot find a good backend protocol, exiting')

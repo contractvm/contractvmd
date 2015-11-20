@@ -52,8 +52,7 @@ TEMP_DIR = DATA_DIR + TEMP_DIR_RELATIVE
 DAPPS_DIR_RELATIVE = '/dapps/'
 DAPPS_DIR = DATA_DIR + DAPPS_DIR_RELATIVE
 
-BACKEND_PROTOCOLS = ['rpc', 'chainsoapi']
-DAPPS = { 'TST': 'TST', 'HW': 'HelloWorld', 'FIFO': 'FIFO', 'BS': 'BlockStore', 'ETH': 'Eth' }
+BACKEND_PROTOCOLS = ['rpc', 'chainsoapi', 'node']
 
 CHAINS = {
 		'XTN' : {
@@ -73,8 +72,8 @@ CHAINS = {
 		'XLT' : {
 			'code': 'XLT',
 			'base_fee': 450000,
-			'genesis_block': "",
-			'genesis_height': 706293,
+			'genesis_block': "22f9d7316645dc02cdd05c32db902ae4aca582c7f138b2b7cecbc58d269e58a6",
+			'genesis_height': 741198,
 			'name': networks.full_network_name_for_netcode ('XLT')
 		},
 		'LTC' : {
@@ -108,7 +107,7 @@ CONF = {
 		'enabled': []
 	},
 	'backend': {
-		'protocol': ['rpc', 'chainsoapi'],
+		'protocol': ['rpc', 'chainsoapi', 'node'],
 		'rpc': {
 			'host': '51.254.215.160',
 			'port':'8080',
