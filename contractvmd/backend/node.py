@@ -20,32 +20,19 @@ from .. import config
 logger = logging.getLogger(config.APP_NAME)
 
 
-# Siccome dal protocollo non si riesce ad avere direttamente il chain height, allora in config si imposta sia la genesis height sia l'ultimo hash.
-# Partiamo con il bootstrap da tale blocco, aggiorniamo un file locale dove abbiamo le assocciazioni indice blocco; si prosegue sino ad arrivare al blocco attuale, si dimenticano i precedenti
-
-# Il db inizia la sincronizzazione dall'hash dell'ultimo blocco, eliminando il
-# resto; richiede gli header dei blocchi successivi
-
-# Nel db salviamo [blockheight] = { 'type': 'full|partial', 'payload': {} }
-# ['status'] = {'blockrange': [firstblock: firstblockhash, lastblock: lastblockhash]
-# [blockhash] = blockheight
-
-
-# GetTransaction:
-# In seguito ad una getBlock, vengono memorizzate in una cache le transazioni
-# assocciate:
-# ['txcache'] = {txid: {tx}, txid: {tx}}
-
-
 
 class ProtocoinClient (clients.ChainClient):
 	def __init__ (self, chaincode, dbf, genesis):
 		self.genesis = genesis
 		self.dbfile = dbf
+		self.connlock = Lock ()
 		self.db = shelve.open (self.dbfile)
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+		self.sock = self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.sock.connect(('localhost', 19333)) #networks.peers[chaincode][0])
 
+		self.db['txcache'] = {}
+			
 		if 'current' in self.db:
 			self.current = self.db['current']
 		else:
@@ -54,11 +41,30 @@ class ProtocoinClient (clients.ChainClient):
 			
 		super (ProtocoinClient, self).__init__ (self.sock, chaincode)
 
+	def chainloop (self):
+		while True:
+			try:
+				self.loop ()
+			except:
+				self.connlock.acquire ()
+				logger.critical ('Disconnected from peers, reconnecting...')
+				try:
+					self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+					self.sock.connect(('localhost', 19333)) #networks.peers[chaincode][0])
+					self.update_socket (self.sock)
+					logger.debug ('Connection enstablished')
+				except:
+					pass
+				self.connlock.release ()
+			
+		
 	def sync (self):
 		while True:
-			logger.debug ('Last block is %s at height %d', hex (int (self.current[0], 16)), self.current[1])
+			self.connlock.acquire ()
+			#logger.debug ('Last block is %s at height %d', hex (int (self.current[0], 16)), self.current[1])
 			getblock = GetBlocks ([int (self.current[0], 16)])
 			self.send_message (getblock)
+			self.connlock.release ()
 			time.sleep (10)
 
 	def close (self):
@@ -81,10 +87,12 @@ class ProtocoinClient (clients.ChainClient):
 				bl['txs'][txid] = codecs.encode (bin_data, 'hex')
 			print (bl)
 
+			self.db['txcache'] = bl['txs']
 			self.db[bl['hash']] = bl
 			self.db[str(bl['height'])] = bl['hash']
 			self.current = (bl['hash'], bl['height'])
 			self.db['current'] = self.current
+			
 			
 	def handle_inv(self, message_header, message):
 		#print (message_header)
@@ -107,7 +115,7 @@ class ProtocoinClient (clients.ChainClient):
 		return None
 
 	def getTransaction (self, txid):
-		pass
+		return self.db['txcache'][txid]
 
 
 class Node (Backend):
@@ -133,13 +141,17 @@ class Node (Backend):
 		if self.syncthread != None:
 			pass # kill the old thread, if any
 		
-		self.client = ProtocoinClient (self.chain, self.dbfile, self.genesis)
+		try:
+			self.client = ProtocoinClient (self.chain, self.dbfile, self.genesis)
+		except:
+			return False
+		
 		self.client.handshake()
 
 		self.syncthread = Thread(target=self.client.sync, args=())
 		self.syncthread.start()
 
-		self.loopthread = Thread(target=self.client.loop, args=())
+		self.loopthread = Thread(target=self.client.chainloop, args=())
 		self.loopthread.start()
 
 		return True

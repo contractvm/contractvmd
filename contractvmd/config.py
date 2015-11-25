@@ -58,8 +58,8 @@ CHAINS = {
 		'XTN' : {
 			'code': 'XTN',
 			'base_fee': 60000,
-			'genesis_block': "",
-			'genesis_height': 329600,
+			'genesis_block': "00000000005a060113161bd7a46d0812b72c5f5c0618777e70288c032a3b98c7",
+			'genesis_height': 606496,
 			'name': networks.full_network_name_for_netcode ('XTN')
 		},
 		'BTC' : {

@@ -92,7 +92,6 @@ class DHT:
 
 	def bootstrap (self):
 		self.dht = kad.DHT ('', int (self.port), storage=self.storage, info=str (self.info))
-
 		self.dht.bootstrap (self.seeds)
 		self.startServiceThread ()
 
@@ -103,6 +102,9 @@ class DHT:
 
 	def serviceThread (self):
 		while True:
-			time.sleep (20)
 			logger.debug ('Discovering nodes, %d total', len (self.peers ()))
-			self.dht.bootstrap ()
+			try:
+				self.dht.bootstrap ()
+			except:
+				pass
+			time.sleep (60)
