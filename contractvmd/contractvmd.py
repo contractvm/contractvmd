@@ -286,8 +286,8 @@ def main ():
 	try:
 		f = open (config.DATA_DIR + '/pid', 'r')
 		cpid = f.read ()
-		f.close ()			
-	
+		f.close ()
+
 		os.kill (int (cpid), signal.SIGKILL)
 		logger.critical ('Already running, killed: ' + str (cpid))
 	except:
@@ -296,7 +296,7 @@ def main ():
 	#logger.addHandler (logging.FileHandler (config.DATA_DIR + '/contractvmd.log'))
 	#logger.info ('Logging to', config.DATA_DIR + '/contractvmd.log')
 
-	
+
 	run = True
 	while run:
 		pid = os.fork ()
@@ -313,6 +313,7 @@ def main ():
 
 			r = os.waitpid (int (pid), 0)
 			logger.critical ('Stopped: ' + str (r[0]))
+			time.sleep (5)
 
 			if r[1] == signal.SIGKILL:
 				run = False

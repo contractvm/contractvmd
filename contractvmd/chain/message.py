@@ -68,6 +68,27 @@ class Message ():
 			return [datahash.decode (), retscript, temp_id]
 
 
+	def isMessage (txhex):
+		tx = Tx.tx_from_hex(txhex)
+		oprets = []
+
+		for txout in tx.txs_out:
+			ops = tools.opcode_list (txout.script)
+			if len (ops) > 0 and ops[0] == 'OP_RETURN':
+				oprets.append (ops[1])
+
+		if len (oprets) == 0:
+			return False
+
+		for opret in oprets:
+			data = (''.join(chr(int(opret[i:i+2], 16)) for i in range(0, len(opret), 2)))
+			if data[0:len (Protocol.MAGIC_FLAG)] != Protocol.MAGIC_FLAG:
+				continue
+			else:
+				return True
+		return False
+
+
 
 	# Deserialize a transaction to a message
 	def fromTransaction (blockn, txhex):
