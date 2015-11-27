@@ -73,20 +73,12 @@ class Message ():
 	def isMessage (txhex):
 		tx = Tx.tx_from_hex (txhex)
 		oprets = []
-		#print ('ID',tx.id())
-
-		#print (tx.id())
-		if (tx.id () == '1547936c4244ea771f0be437d227649f892841e8fd6fb9a47cab967d71d2ed12'):
-			print (tx)
 			
 		for txout in tx.txs_out:
 			ops = tools.opcode_list (txout.script)
-			if (tx.id () == '1547936c4244ea771f0be437d227649f892841e8fd6fb9a47cab967d71d2ed12'):
-				print (ops[0])
 			if len (ops) > 0 and ops[0] == 'OP_RETURN':
 				oprets.append (ops[1])
 
-		#print ('Oprets:', len (oprets))
 		if len (oprets) == 0:
 			return False
 
