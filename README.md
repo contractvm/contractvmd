@@ -26,7 +26,7 @@ After the script execution, the contractvmd daemon and library should be install
 Now we can start a local instance of the daemon (this is necessary since there isn't a test network at the moment); we do this by typing:
 
 ```shell
-contractvmd --discard-old-blocks
+contractvmd
 ```
 
 Install one of case study dapps via dappman:
