@@ -14,7 +14,7 @@ class BlockWatch:
 
 	def run (self):
 		while True:
-			h = self.backend.getLastBlockHeight () - 1
+			h = self.backend.getLastBlockHeight ()
 	
 			if (h != self.current_height):
 				for i in range (self.current_height+1, h+1):

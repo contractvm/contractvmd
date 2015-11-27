@@ -5,13 +5,11 @@
 import logging
 import imp
 import sys
-from colorlog import ColoredFormatter
 
 from .database import Database
 from . import config
 
 logger = logging.getLogger(config.APP_NAME)
-
 
 
 class PluginManager:

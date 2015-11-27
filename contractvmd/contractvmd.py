@@ -130,8 +130,8 @@ def core (opts, args):
 		sys.exit (0)
 
 	# If firstrun, discard old blocks
-	if firstrun:
-		config.CONF['discard-old-blocks'] = True
+	#if firstrun:
+	#	config.CONF['discard-old-blocks'] = True
 
 	# Start the backend
 	be = None

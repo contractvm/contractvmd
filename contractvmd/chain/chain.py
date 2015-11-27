@@ -90,6 +90,12 @@ class Chain:
 
 	def parseBlock (self, blockn):
 		block = self.backend.getBlock (blockn)
+
+		if block == None:
+			logger.debug ('Waiting for block...')
+			time.sleep (2)
+			return
+		
 		logger.debug ('Parsing block %s - %d %s',
 			datetime.datetime.fromtimestamp(int(block['time'])).strftime('%Y-%m-%d %H:%M:%S'),
 			block['height'], block['hash'])

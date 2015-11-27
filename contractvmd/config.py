@@ -58,8 +58,8 @@ CHAINS = {
 		'XTN' : {
 			'code': 'XTN',
 			'base_fee': 60000,
-			'genesis_block': "00000000005a060113161bd7a46d0812b72c5f5c0618777e70288c032a3b98c7",
-			'genesis_height': 606496,
+			'genesis_block': "000000000077f119d8b40b2858c865a9d5950595297df75d93c5c414743e2928",
+			'genesis_height': 607571,
 			'name': networks.full_network_name_for_netcode ('XTN')
 		},
 		'BTC' : {
@@ -109,7 +109,7 @@ CONF = {
 	'backend': {
 		'protocol': ['rpc', 'chainsoapi', 'node'],
 		'rpc': {
-			'host': '51.254.215.160',
+			'host': 'localhost', #51.254.215.160',
 			'port':'8080',
 			'user':'test',
 			'password': 'testpass',
@@ -157,12 +157,12 @@ formatter = ColoredFormatter(
 	style = '%'
 )
 
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
+stream = logging.StreamHandler ()
+stream.setFormatter (formatter)
 
-logger = logging.getLogger(APP_NAME)
-logger.addHandler(stream)
+logger = logging.getLogger (APP_NAME)
+logger.addHandler (stream)
 
 
-logging.addLevelName(15, "PLUGINFO")
+logging.addLevelName (15, "PLUGINFO")
 logging.Logger.pluginfo = lambda self, message, *args, **kws: self._log(15, message, args, **kws) if self.isEnabledFor(15) else None

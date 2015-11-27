@@ -16,13 +16,11 @@ from threading import Lock
 from pycoin.serialize import b2h_rev, h2b
 from bitpeer import clients, networks, node, serializers
 from ..chain.message import Message
-
 from .backend import *
 from .. import config
-
 from io import BytesIO
-logger = logging.getLogger(config.APP_NAME)
 
+logger = logging.getLogger(config.APP_NAME)
 
 class Node (Backend):
 	# Return a block with transactions that contains only the magicode
@@ -32,12 +30,14 @@ class Node (Backend):
 		block = Block.parse(BytesIO(b))
 
 		v = []
+		print ('Before filter', len (block.txs))
 		for tx in block.txs:
 			tx = tx.as_hex ()
 			if Message.isMessage (tx):
 				deserializer = serializersTxSerializer ()
 				tt = deserializer.deserialize(BytesIO (tx))
 				v.append (tt)
+		print ('After filter', len (v))
 
 		block_origin.txns = v
 		return block_origin
@@ -49,7 +49,8 @@ class Node (Backend):
 		self.genesis = genesisblock
 		self.tx_cache = {}
 		self.thread = None
-		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1])
+		self.lastID = 0
+		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1], maxpeers=15, logger=logger)
 		self.node.blockFilter = Node.blockFilter
 
 	def getChainCode (self):
@@ -67,7 +68,8 @@ class Node (Backend):
 			self.node.connect ()
 		except:
 			logger.critical ('No peer available')
-		print (len(self.node.peers))
+			return False
+		logger.info ('Bootstraped %d peers', len(self.node.peers))
 
 		self.thread = Thread (target=self.node.loop, args=())
 		self.thread.start ()
@@ -94,7 +96,6 @@ class Node (Backend):
 			d [tx.id ()] = tx.as_hex ()
 			
 		self.tx_cache = d
-
 		block = { "height": self.lastID, "time": block.timestamp, "hash": bhash, "tx": v }
 		return block
 
