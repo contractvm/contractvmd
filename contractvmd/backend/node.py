@@ -9,32 +9,38 @@ import time
 import shelve
 import socket
 import codecs
+import binascii
+from pycoin.block import Block
 from threading import Thread
 from threading import Lock
-from protocoin import clients, networks, node
+from pycoin.serialize import b2h_rev, h2b
+from bitpeer import clients, networks, node, serializers
 from ..chain.message import Message
 
 from .backend import *
 from .. import config
 
+from io import BytesIO
 logger = logging.getLogger(config.APP_NAME)
 
 
 class Node (Backend):
-	# TODO must check if the block contains any block with OPRETURN and magiccode.
 	# Return a block with transactions that contains only the magicode
-	# chain.isMessage check a single transaction
-	def blockFilter (block):
+	def blockFilter (block_origin):
+		deserializer = serializers.BlockSerializer ()
+		b = h2b(str (binascii.hexlify (deserializer.serialize (block_origin)))[2:-1])
+		block = Block.parse(BytesIO(b))
+
 		v = []
-		for tx in txns:
+		for tx in block.txs:
+			tx = tx.as_hex ()
 			if Message.isMessage (tx):
-				v.append (tx)
+				deserializer = serializersTxSerializer ()
+				tt = deserializer.deserialize(BytesIO (tx))
+				v.append (tt)
 
-		if len (v) == 0:
-			return None
-
-		block.txns = v
-		return block
+		block_origin.txns = v
+		return block_origin
 
 	def __init__ (self, chain, dbfile, genesisblock = None):
 		if not networks.isSupported (chain):
@@ -43,7 +49,7 @@ class Node (Backend):
 		self.genesis = genesisblock
 		self.tx_cache = {}
 		self.thread = None
-		self.node = node.ProtocoinNode (chain, dbfile, self.genesis[0], self.genesis[1])
+		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1])
 		self.node.blockFilter = Node.blockFilter
 
 	def getChainCode (self):
@@ -61,6 +67,7 @@ class Node (Backend):
 			self.node.connect ()
 		except:
 			logger.critical ('No peer available')
+		print (len(self.node.peers))
 
 		self.thread = Thread (target=self.node.loop, args=())
 		self.thread.start ()
@@ -70,12 +77,25 @@ class Node (Backend):
 		return self.node.getLastBlockHeight ()
 
 	def getBlockHash (self, index):
+		self.lastID = index
 		return self.node.getBlockHash (index)
 
 	def getBlockByHash (self, bhash):
+		if bhash == None:
+			return None
+		
 		b = self.node.getBlockByHash (bhash)
-		self.tx_cache = b.txns
-		block = {"height": '', "time": '', "hash": bhash, "tx": d['data']['txs']}
+		block = Block.parse(BytesIO(b))
+		
+		v = []
+		d = {}
+		for tx in block.txs:
+			v.append (tx.id ())
+			d [tx.id ()] = tx.as_hex ()
+			
+		self.tx_cache = d
+
+		block = { "height": self.lastID, "time": block.timestamp, "hash": bhash, "tx": v }
 		return block
 
 	def broadcastTransaction (self, transaction):
