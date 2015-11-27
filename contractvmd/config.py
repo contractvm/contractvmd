@@ -98,7 +98,7 @@ CHAINS = {
 
 
 CONF = {
-	'chain': 'XLT',
+	'chain': 'XTN',
 	'regtest': False,
 	'discard-old-blocks': False,
 	'maxpeers': 25,
@@ -107,7 +107,7 @@ CONF = {
 		'enabled': []
 	},
 	'backend': {
-		'protocol': ['rpc', 'chainsoapi', 'node'],
+		'protocol': ['node', 'rpc', 'chainsoapi'],
 		'rpc': {
 			'host': 'localhost', #51.254.215.160',
 			'port':'8080',
