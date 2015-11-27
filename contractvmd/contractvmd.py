@@ -162,7 +162,7 @@ def core (opts, args):
 
 		elif cbe == 'node':
 			c = config.CHAINS[config.CONF['chain']]
-			be = node.Node (config.CONF['chain'], config.DATA_DIR+'/proto_'+config.CONF['chain']+'.dat', (c['genesis_block'], c['genesis_height']))
+			be = node.Node (config.CONF['chain'], config.DATA_DIR+'/node_'+config.CONF['chain']+'.dat', (c['genesis_block'], c['genesis_height']))
 			if be.connect ():
 				logger.info ('Backend protocol %s initialized', cbe)
 			else:

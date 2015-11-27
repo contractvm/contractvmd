@@ -24,23 +24,14 @@ logger = logging.getLogger(config.APP_NAME)
 
 class Node (Backend):
 	# Return a block with transactions that contains only the magicode
-	def blockFilter (block_origin):
-		deserializer = serializers.BlockSerializer ()
-		b = h2b(str (binascii.hexlify (deserializer.serialize (block_origin)))[2:-1])
-		block = Block.parse(BytesIO(b))
-
+	def blockFilter (block):
 		v = []
-		print ('Before filter', len (block.txs))
 		for tx in block.txs:
-			tx = tx.as_hex ()
-			if Message.isMessage (tx):
-				deserializer = serializersTxSerializer ()
-				tt = deserializer.deserialize(BytesIO (tx))
-				v.append (tt)
-		print ('After filter', len (v))
-
-		block_origin.txns = v
-		return block_origin
+			tt = tx.as_hex ()
+			if Message.isMessage (tt):
+				v.append (tx)
+		block.txs = v
+		return block
 
 	def __init__ (self, chain, dbfile, genesisblock = None):
 		if not networks.isSupported (chain):
@@ -50,7 +41,7 @@ class Node (Backend):
 		self.tx_cache = {}
 		self.thread = None
 		self.lastID = 0
-		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1], maxpeers=15, logger=logger)
+		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1], maxpeers=15)#, logger=logger)
 		self.node.blockFilter = Node.blockFilter
 
 	def getChainCode (self):
@@ -86,8 +77,7 @@ class Node (Backend):
 		if bhash == None:
 			return None
 		
-		b = self.node.getBlockByHash (bhash)
-		block = Block.parse(BytesIO(b))
+		block = self.node.getBlockByHash (bhash)
 		
 		v = []
 		d = {}
