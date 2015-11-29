@@ -65,8 +65,8 @@ CHAINS = {
 		'BTC' : {
 			'code': 'BTC',
 			'base_fee': 40000,
-			'genesis_block': "",
-			'genesis_height': 329203,
+			'genesis_block': "000000000000000002f214ea3bc2c195ed11f9195ab07229151befab03ada10b",
+			'genesis_height': 385720,
 			'name': networks.full_network_name_for_netcode ('BTC')
 		},
 		'XLT' : {

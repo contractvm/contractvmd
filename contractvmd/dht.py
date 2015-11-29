@@ -101,10 +101,13 @@ class DHT:
 		return self.dht.peers ()
 
 	def serviceThread (self):
+		i = 0
 		while True:
-			logger.debug ('Discovering nodes, %d total', len (self.peers ()))
+			if i % 4 == 0:
+				logger.debug ('Discovering nodes, %d total', len (self.peers ()))
 			try:
 				self.dht.bootstrap ()
 			except:
 				pass
 			time.sleep (60)
+			i += 1

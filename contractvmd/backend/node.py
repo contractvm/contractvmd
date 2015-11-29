@@ -41,7 +41,7 @@ class Node (Backend):
 		self.tx_cache = {}
 		self.thread = None
 		self.lastID = 0
-		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1], maxpeers=15)#, logger=logger)
+		self.node = node.Node (chain, dbfile, self.genesis[0], self.genesis[1], maxpeers=25, logger=logger)
 		self.node.blockFilter = Node.blockFilter
 
 	def getChainCode (self):
@@ -60,7 +60,7 @@ class Node (Backend):
 		except:
 			logger.critical ('No peer available')
 			return False
-		logger.info ('Bootstraped %d peers', len(self.node.peers))
+		logger.info ('Bootstraped from %d peers (%d nodes discovered)', len(self.node.clients), len (self.node.peers))
 
 		self.thread = Thread (target=self.node.loop, args=())
 		self.thread.start ()
