@@ -43,7 +43,7 @@ def app_data_path (appauthor, appname, roaming=True):
 
 
 VERBOSE = 5
-APP_VERSION = '0.6.8'
+APP_VERSION = '0.6.9'
 APP_NAME = 'contractvm'
 APP_AUTHOR = 'Davide Gessa'
 DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)
@@ -60,7 +60,8 @@ CHAINS = {
 			'base_fee': 60000,
 			'genesis_block': "000000000077f119d8b40b2858c865a9d5950595297df75d93c5c414743e2928",
 			'genesis_height': 607571,
-			'name': networks.full_network_name_for_netcode ('XTN')
+			'name': networks.full_network_name_for_netcode ('XTN'),
+			'seeds': [ '51.254.215.160:80' ]
 		},
 		'BTC' : {
 			'code': 'BTC',
@@ -86,16 +87,11 @@ CHAINS = {
 		'DOGE': {
 			'code': 'DOGE',
 			'base_fee': 100000000,
-			'genesis_block': "",
-			'genesis_height': 481000,
+			'genesis_block': "7a0d505875129fcf5f88b6bad6f083214d341130dde3053019d38a23258b4f1e",
+			'genesis_height': 981606,
 			'name': networks.full_network_name_for_netcode ('DOGE')
 		}
 	}
-
-
-#'dapps': [ 'tst', 'hw', 'bs', 'fifo' ],
-
-
 
 CONF = {
 	'chain': 'XTN',
@@ -107,14 +103,7 @@ CONF = {
 		'enabled': []
 	},
 	'backend': {
-		'protocol': ['node', 'rpc', 'chainsoapi'],
-		'rpc': {
-			'host': 'localhost', #51.254.215.160',
-			'port':'8080',
-			'user':'test',
-			'password': 'testpass',
-			'ssl': False
-		}
+		'protocol': ['node'],
 	},
 	'api': {
 		'enabled': True,
@@ -122,7 +111,7 @@ CONF = {
 		'port': 8181
 	},
 	'dht': {
-		'seeds': [],
+		'seeds': [ '51.254.215.160:80' ],
 		'port': 5051
 	}
 }

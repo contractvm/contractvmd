@@ -129,9 +129,6 @@ def core (opts, args):
 		logger.critical ('Unable to start %s on chain \'%s\'', config.APP_NAME, config.CONF['chain'])
 		sys.exit (0)
 
-	# If firstrun, discard old blocks
-	#if firstrun:
-	#	config.CONF['discard-old-blocks'] = True
 
 	# Start the backend
 	be = None
@@ -166,7 +163,7 @@ def core (opts, args):
 			if be.connect ():
 				logger.info ('Backend protocol %s initialized', cbe)
 			else:
-				logger.critical ('Unable to enstablish a protocoin daemon, falling back')
+				logger.critical ('Unable to enstablish a bitpeer daemon, falling back')
 				be = None
 
 		else:
