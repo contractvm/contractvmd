@@ -14,7 +14,7 @@ sudo rm /usr/bin/python3
 sudo ln -s /usr/bin/python3.5 /usr/bin/python3
 
 sudo apt-get remove python-pip
-rm -f get-pip.py
+rm -f get-pip.py*
 wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
 sudo python3 get-pip.py
 
