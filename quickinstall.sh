@@ -19,7 +19,7 @@ cd contractvmd
 git checkout $CVMD_STABLE
 
 echo "Installing requirements..."
-sudo $PIP install -r requirements.txt
+sudo $PIP install --upgrade -r requirements.txt
 
 echo "Installing daemon..."
 sudo $PYTHON setup.py install
@@ -31,7 +31,7 @@ cd libcontractvm
 git checkout $(LIBCVM_STABLE)
 
 echo "Installing requirements..."
-sudo $PIP install -r requirements.txt
+sudo $PIP install --upgrade -r requirements.txt
 
 echo "Installing library..."
 sudo $PYTHON setup.py install
