@@ -1,8 +1,6 @@
-CVMD_STABLE=0043b16fad362299d027bb8f2b9c5b7eba1abcd0
-LIBCVM_STABLE=a9e6a755346bc9cf899766d04bfbd74389df9794
-
-PYTHON=python3
+PYTHON=python3.5
 PIP=pip3
+
 
 
 echo "Contractvmd quick installer for Linux"
@@ -11,30 +9,22 @@ sudo rm -rf ~/.contractvm
 #echo "Installing required packages..."
 #sudo apt-get install python3 python3-pip
 
+sudo apt-get install libxml2-dev python3.5 python3.5-dev python3-pip
+sudo rm /usr/bin/python3
+sudo ln -s /usr/bin/python3.5 /usr/bin/python3
+
+
+echo "Installing pycoin"
+sudo pip3 install --upgrade pycoin
+
+echo "Installing bitpeer"
+sudo pip3 install --upgrade bitpeer.py
 
 echo "Installing contractvm"
-cd ~/cvm-temp/
-git clone https://github.com/contractvm/contractvmd
-cd contractvmd
-git checkout $CVMD_STABLE
-
-echo "Installing requirements..."
-sudo $PIP install --upgrade -r requirements.txt
-
-echo "Installing daemon..."
-sudo $PYTHON setup.py install
+sudo pip3 install --upgrade contractvm
 
 echo "Installing contractvm-library"
-cd ~/cvm-temp/
-git clone https://github.com/contractvm/libcontractvm
-cd libcontractvm
-git checkout $(LIBCVM_STABLE)
-
-echo "Installing requirements..."
-sudo $PIP install --upgrade -r requirements.txt
-
-echo "Installing library..."
-sudo $PYTHON setup.py install
+sudo pip3 install --upgrade libcontractvm
 
 echo "Installation done."
 
