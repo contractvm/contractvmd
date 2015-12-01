@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 def main ():
 	ARGS = '-server -rpcuser=test -rpcpassword=testpass -rpcport=8080 -txindex -debug -printtoconsole -rpcallowip=0.0.0.0/0'
 

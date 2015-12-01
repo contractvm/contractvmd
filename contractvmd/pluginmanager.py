@@ -31,6 +31,12 @@ class PluginManager:
 		self.dapps[pname.lower ()] = po
 
 
+	# Return true if the message should be handled
+	def shouldBeHandled (self, m):
+		for p in self.dapps:
+			if m.DappCode == self.dapps[p].DappCode:
+				return True
+		return False
 
 	# Handle message received from the DHT
 	def handleMessage (self, m):

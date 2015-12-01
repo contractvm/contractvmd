@@ -71,7 +71,7 @@ class Message ():
 
 
 	def isMessage (txhex):
-		tx = Tx.tx_from_hex (txhex)
+		tx = Tx.from_hex (txhex)
 		oprets = []
 			
 		for txout in tx.txs_out:
@@ -94,7 +94,7 @@ class Message ():
 
 	# Deserialize a transaction to a message
 	def fromTransaction (blockn, txhex):
-		tx = Tx.tx_from_hex(txhex)
+		tx = Tx.from_hex(txhex)
 
 		#print (binascii.hexlify (tx.blanked_hash ()))
 

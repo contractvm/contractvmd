@@ -23,7 +23,7 @@ class DHT:
 		self.storage = kad.storage.Shelve (self.dhtfile)
 		self.writelock = Lock ()
 
-		##TODO Open the peer file and search for seed peers
+		##TODO Open the peers file and search for seed peers
 		
 		for peer in seedlist:
 			peer = peer.split (':')

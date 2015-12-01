@@ -111,20 +111,23 @@ class Chain:
 					message = Message.fromTransaction (block['height'], txhex)
 
 					if message != None:
-						self.dhtdatalock.acquire ()
-						if not message.Block in self.dhtrequests:
-							self.dhtrequests[message.Block] = {'pending': 0, 'timer': 0, 'list': {}}
+						if self.plugman.shouldBeHandled (message):
+							self.dhtdatalock.acquire ()
+							if not message.Block in self.dhtrequests:
+								self.dhtrequests[message.Block] = {'pending': 0, 'timer': 0, 'list': {}}
 
-						self.dhtrequests [message.Block]['pending'] += 1
-						self.dhtrequests [message.Block]['list'][message.Hash] = None
+							self.dhtrequests [message.Block]['pending'] += 1
+							self.dhtrequests [message.Block]['list'][message.Hash] = None
 
-						if not message.Block in self.dhtqueue:
-							self.dhtqueue.append (message.Block)
+							if not message.Block in self.dhtqueue:
+								self.dhtqueue.append (message.Block)
 
-						self.dhtdatalock.release ()
+							self.dhtdatalock.release ()
 
-						# Get data from DHT
-						self.dht.get (message.Hash, self.onMessageDataReceived, message)
+							# Get data from DHT
+							self.dht.get (message.Hash, self.onMessageDataReceived, message)
+						else:
+							logger.debug ('Message %s should not be handled, skipped', txid)
 
 				#except:
 				#	logger.error ('Failed to parse transaction %s of block %d', txid, nblock)
