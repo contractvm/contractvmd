@@ -28,8 +28,11 @@ class Node (Backend):
 		v = []
 		for tx in block.txs:
 			tt = tx.as_hex ()
-			if Message.isMessage (tt):
-				v.append (tx)
+			try:
+				if Message.isMessage (tt):
+					v.append (tx)
+			except:
+				pass
 		block.txs = v
 		return block
 

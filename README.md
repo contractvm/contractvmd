@@ -6,16 +6,9 @@ Documentation: http://contractvm.github.io/doc
 
 ## Quick start
 
-The quickinstall.sh will install kad.py, contractvmd, libcontractvmd with sample dapps and all required dependencies.
+The quickinstall.sh will install kad.py, bitpeer.py, contractvmd, libcontractvmd with sample dapps and all required dependencies.
 
-First, install python3 and python3-pip (aka pip3); in ubuntu linux you can do this by:
-
-```shell
-sudo apt-get install python3 python3-pip
-```
-
-
-Then, download and run the installation script:
+Download and run the installation script:
 
 ```shell
 curl https://raw.githubusercontent.com/contractvm/contractvmd/master/quickinstall.sh | sh

@@ -76,6 +76,7 @@ class Message ():
 			
 		for txout in tx.txs_out:
 			ops = tools.opcode_list (txout.script)
+			#print ('OPS:',ops)
 			if len (ops) > 0 and ops[0] == 'OP_RETURN':
 				oprets.append (ops[1])
 
