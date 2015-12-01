@@ -9,7 +9,7 @@ sudo rm -rf ~/.contractvm
 #echo "Installing required packages..."
 #sudo apt-get install python3 python3-pip
 
-sudo apt-get install libxml2-dev libxslt1-dev python3.5 python3.5-dev python3-pip curl git
+sudo apt-get install -y libxml2-dev libxslt1-dev python3.5 python3.5-dev python3-pip curl git
 sudo rm /usr/bin/python3
 sudo ln -s /usr/bin/python3.5 /usr/bin/python3
 
