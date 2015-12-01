@@ -13,7 +13,11 @@ sudo apt-get install -y libxml2-dev libxslt1-dev python3.5 python3.5-dev python3
 sudo rm /usr/bin/python3
 sudo ln -s /usr/bin/python3.5 /usr/bin/python3
 
-sudo pip3 uninstall contractvm libcontractvm
+sudo apt-get remove python-pip
+wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+sudo python3 get-pip.py
+
+sudo pip3 uninstall -y contractvm libcontractvm
 echo "Installing pycoin"
 sudo pip3 install --upgrade pycoin
 
