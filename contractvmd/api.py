@@ -103,7 +103,14 @@ class API:
 
 	@Request.application
 	def serveApplication (self, request):
-		rjson = json.loads (request.data.decode('ascii'))
+		try:
+			rjson = json.loads (request.data.decode('ascii'))
+		except:
+			apiresponse = Response({}, mimetype='application/json')
+			apiresponse.headers.add('Access-Control-Allow-Origin', '*')
+			apiresponse.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+			apiresponse.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+			return apiresponse
 
 		if rjson['method'] in self.RPCDispatcher:
 			nargs = len (inspect.getargspec (self.RPCDispatcher[rjson['method']]).args) - 1
@@ -117,9 +124,11 @@ class API:
 			logger.error ('Client invalid request: "%s" %s', rjson['method'], str(rjson['params']))
 
 		response = JSONRPCResponseManager.handle (request.data, self.RPCDispatcher)
-
-		return Response(response.json, mimetype='application/json')
-
+		apiresponse = Response(response.json, mimetype='application/json')
+		apiresponse.headers.add('Access-Control-Allow-Origin', '*')
+		apiresponse.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH')
+		apiresponse.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+		return apiresponse
 
 	def serverThread (self):
 		if self.threads > 1:
