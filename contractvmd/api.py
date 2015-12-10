@@ -43,7 +43,7 @@ class API:
 			    },
 			    "node": {
 				"backend": [ "rpc", "chainsoapi" ],
-				"plugins": [ "tst" ],
+				"dapps": { "list": [ "cotst" ], "enabled": [ "cotst" ] },
 				"version": "0.1"
 			    }
 			}},
