@@ -43,7 +43,7 @@ def app_data_path (appauthor, appname, roaming=True):
 
 
 VERBOSE = 5
-APP_VERSION = '0.6.9.2'
+APP_VERSION = '0.6.9.2.1'
 APP_NAME = 'contractvm'
 APP_AUTHOR = 'Davide Gessa'
 DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)
@@ -58,10 +58,10 @@ CHAINS = {
 		'XTN' : {
 			'code': 'XTN',
 			'base_fee': 60000,
-			'genesis_block': "000000000077f119d8b40b2858c865a9d5950595297df75d93c5c414743e2928",
-			'genesis_height': 607571,
+			'genesis_block': "0000000033ab95c1231f6dede34aad172068250354beccfad156072c6d37e093",
+			'genesis_height': 625480,
 			'name': networks.full_network_name_for_netcode ('XTN'),
-			'seeds': [ '51.254.215.160:80' ]
+			'seeds': [ ]
 		},
 		'BTC' : {
 			'code': 'BTC',
