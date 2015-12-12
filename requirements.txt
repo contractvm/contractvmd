@@ -2,7 +2,7 @@ json-rpc
 colorlog
 werkzeug
 base58
-pycoin
+pycoin==0.62
 lxml
 kad.py
 bitpeer.py
