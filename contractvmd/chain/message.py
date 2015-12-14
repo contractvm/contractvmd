@@ -114,7 +114,11 @@ class Message ():
 		# Check opret datas
 		for opret in oprets:
 			# Get the opreturn data
-			data = (''.join(chr(int(opret[i:i+2], 16)) for i in range(0, len(opret), 2)))
+			try:
+				data = (''.join(chr(int(opret[i:i+2], 16)) for i in range(0, len(opret), 2)))
+			except:
+				# Other oprets with invalid data
+				continue
 
 			# Check if data is a contractchain message
 			if data[0:len (Protocol.MAGIC_FLAG)] != Protocol.MAGIC_FLAG:
