@@ -136,6 +136,7 @@ def core (opts, args):
 	while be == None and len (fallbackends) > 0:
 		cbe = fallbackends [0]
 		fallbackends = fallbackends[1:]
+		#print (fallbackends)
 
 		if cbe == 'rpc':
 			be = daemonrpc.DaemonRPC (config.CONF['chain'], config.CONF['backend']['rpc']['host'], config.CONF['backend']['rpc']['port'],
