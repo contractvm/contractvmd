@@ -164,11 +164,7 @@ class Chain:
 						mdata = self.dhtrequests[bn]['list'][m]
 
 						if mdata != None:
-							# TODO sistema
-							#try:
 							self.plugman.handleMessage (mdata)
-							#except:
-							#	logger.critical ("Message %s create an exception in plugin", m)
 						else:
 							logger.error ("Skipping message %s due to a timeout", m)
 

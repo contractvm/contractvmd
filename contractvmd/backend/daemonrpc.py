@@ -87,7 +87,7 @@ class DaemonRPC (Backend):
 
 	def getLastBlockHeight (self):
 		response = self._rpc ("getblockcount")
-		return int (response["result"])+1
+		return int (response["result"])
 
 
 	def getBlockHash (self, index):
