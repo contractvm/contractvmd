@@ -48,8 +48,12 @@ class DappCompiler ():
 		]
 
 		self.requirements = []
-		for x in self.dappsrc.REQUIRE:
-			self.requirements.append (x + '\n')
+
+		try:
+			for x in self.dappsrc.REQUIRE:
+				self.requirements.append (x + '\n')
+		except:
+			pass
 
 		self.setup = [
 			'#!/usr/bin/python3\n',
@@ -266,12 +270,17 @@ class DappCompiler ():
 			'\tdef handleMessage (self, m):\n'
 		]
 
-		for x in self.dappsrc.UPDATE:
+		for update in self.dappsrc.UPDATE:
+			bb = []
+			args = self.dappsrc.UPDATE[update]['function'].__code__.co_varnames[1:]
+			for arg in args:
+				bb += ['m.Data ["' + arg + '"]']
+
 			base += [
-		                '\t\tif m.Method == ' + self.NAME + 'Protocol.METHOD_' + x.upper () + ':\n',
-				"\t\t\tlogger.pluginfo ('Found new message %s: hello %s', m.Hash, m.Data['self.NAME'])\n",
-		                "\t\t\tself.core.addself.NAME (m.Data['self.NAME'])\n\n"
-		            ]
+				'\t\tif m.Method == ' + self.NAME + 'Protocol.METHOD_' + update.upper () + ':\n',
+				"\t\t\tlogger.pluginfo ('Found new message %s: %s', m.Hash, '" + update + "')\n",
+				"\t\t\tself.core." + update + " (" + ', '.join (bb) + ")\n\n"
+			]		    
 
 		return base
 
@@ -480,10 +489,14 @@ def usage ():
 
 
 def main ():
-	if len (sys.argv) < 3:		
+	if len (sys.argv) < 2:		
 		usage ()
 
-	dc = DappCompiler (sys.argv[1], sys.argv[2])
+	if len (sys.argv) > 2:
+		dc = DappCompiler (sys.argv[1], sys.argv[2])
+	else:
+		dc = DappCompiler (sys.argv[1], 'build')
+		
 	dc.compile ()
 	dc.save ()
 
