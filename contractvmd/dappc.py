@@ -372,7 +372,7 @@ class DappCompiler ():
 			'from . import ' + self.NAME.lower ()
 		]
 
-		self.library = self.createLibrary ()
+		self.library = self.compileLibrary ()
 
 
 	def save (self):
