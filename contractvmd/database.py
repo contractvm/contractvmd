@@ -114,3 +114,14 @@ class Database:
 	def init (self, key, dictobj):
 		if not self.exists (key):
 			self.set (key, dictobj)
+
+
+class State ():
+	def __init__ (self, database):
+		self.database = database
+
+	def init (self, key, value):
+		if not self.database.exists (key):
+			self.set (key, value)
+	
+		

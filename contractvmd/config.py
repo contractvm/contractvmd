@@ -43,7 +43,7 @@ def app_data_path (appauthor, appname, roaming=True):
 
 
 VERBOSE = 5
-APP_VERSION = '0.6.9.16'
+APP_VERSION = '0.7.0'
 APP_NAME = 'contractvm'
 APP_AUTHOR = 'Davide Gessa'
 DATA_DIR = app_data_path (appauthor=APP_AUTHOR, appname=APP_NAME)

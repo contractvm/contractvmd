@@ -17,7 +17,8 @@ setup(name='contractvm',
 		'console_scripts': [
 			'contractvmd=contractvmd.contractvmd:main',
 			'dappman=contractvmd.dappman:main',
-			'chainstarter=contractvmd.chainstarter:main'
+			'chainstarter=contractvmd.chainstarter:main',
+			'dappc=contractvmd.dappc:main'
 		],
 	},
 	install_requires=open ('requirements.txt', 'r').read ().split ('\n')
