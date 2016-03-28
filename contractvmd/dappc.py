@@ -25,7 +25,7 @@ class DappCompiler ():
 		self.source = source
 		self.destination = destination
 
-	def createSample (self):
+	def compileSample (self):
 		base = [
 			'#!/usr/bin/python3\n',
 			'from libcontractvm import Wallet, WalletExplorer, ConsensusManager\n',
@@ -36,10 +36,10 @@ class DappCompiler ():
 			"wallet = WalletExplorer.WalletExplorer (wallet_file='test.wallet')\n",
 			'dapp = ' + self.NAME + 'Dapp.' + self.NAME + 'Dapp (consMan, wallet=wallet)\n',
 		]
-		self.sample = base
+		return base
 
-	def createMeta (self):
-		self.manifest = [ 
+	def compileMeta (self):
+		manifest = [ 
 			"{\n",
 			'\t"name": "' + self.NAME.lower () + '",\n',
 			'\t"version": "' + str (self.dappsrc.VERSION) + '",\n',
@@ -47,15 +47,15 @@ class DappCompiler ():
 			'\t"description": "' + self.dappsrc.DESCRIPTION + '"\n}\n'
 		]
 
-		self.requirements = []
+		requirements = []
 
 		try:
 			for x in self.dappsrc.REQUIRE:
-				self.requirements.append (x + '\n')
+				requirements.append (x + '\n')
 		except:
 			pass
 
-		self.setup = [
+		setup = [
 			'#!/usr/bin/python3\n',
 			'from setuptools import find_packages\n',
 			'from setuptools import setup\n\n',
@@ -68,9 +68,10 @@ class DappCompiler ():
 			'\tpackages=["' + self.NAME.lower () + '"]\n',
 			')\n'
 		]
+		return (manifest, setup, requirements)
 
 
-	def createLibrary (self):
+	def compileLibrary (self):
 		base = [
 			'from libcontractvm import Wallet, ConsensusManager, DappManager\n\n',
 			'class ' + self.NAME + 'Dapp (DappManager.DappManager):\n',
@@ -122,7 +123,7 @@ class DappCompiler ():
 		return base
 
 
-	def createProtocol (self):
+	def compileProtocol (self):
 		methods = []
 
 		base = [
@@ -138,7 +139,7 @@ class DappCompiler ():
 		return base
 
 
-	def createMessage (self):
+	def compileMessage (self):
 		base = [
 			'class ' + self.NAME + 'Message (Message):\n'
 		]
@@ -184,7 +185,7 @@ class DappCompiler ():
 		return base
 
 
-	def createAPI (self):
+	def compileAPI (self):
 		base = [
 			'class '+self.NAME+'API (dapp.API):\n',
 			'\tdef __init__ (self, core, dht, api):\n',
@@ -259,7 +260,7 @@ class DappCompiler ():
 		return base
 
 
-	def createMain (self):
+	def compileMain (self):
 		base = [
 			'class ' + self.NAME.lower () + ' (dapp.Dapp):\n',
 			'\tdef __init__ (self, chain, db, dht, apimaster):\n',
@@ -285,12 +286,12 @@ class DappCompiler ():
 		return base
 
 
-	def createCoreWrapper (self):
+	def compileCoreWrapper (self):
 		base = [
 			'class ' + self.NAME + 'CoreWrapper (dapp.Core):\n',
 			'\tdef __init__ (self, chain, database):\n',
 			'\t\tsuper (' + self.NAME + 'CoreWrapperCore, self).__init__ (chain, database)\n\n',
-			'\tdef createCore (self, message):\n',
+			'\tdef compileCore (self, message):\n',
 			'\t\tc = core.' + self.NAME + 'Core()\n',
 			'\t\tc.state = database.State (self.database)\n',
 			'\t\tc.message = message\n'
@@ -346,13 +347,14 @@ class DappCompiler ():
 
 	def compile (self):
 		# Create the source of the dapp
-		protocol = self.createProtocol ()
-		message = self.createMessage ()
-		corewrap = self.createCoreWrapper ()
-		api = self.createAPI ()
-		main = self.createMain ()
-		self.createMeta ()
-		self.createSample ()
+		protocol = self.compileProtocol ()
+		message = self.compileMessage ()
+		corewrap = self.compileCoreWrapper ()
+		api = self.compileAPI ()
+		main = self.compileMain ()
+		
+		(self.manifest, self.setup, self.requirements) = self.compileMeta ()
+		self.sample = self.compileSample ()
 
 		header = [
 			'import logging\n\n',
@@ -371,6 +373,7 @@ class DappCompiler ():
 		]
 
 		self.library = self.createLibrary ()
+
 
 	def save (self):
 		basedir = self.destination + '/'
