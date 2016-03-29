@@ -1,3 +1,23 @@
+"""
+Module structure
+
+dappc/
+dappc/__init___.py
+dappc/dappc.py 				- Starter file (contains the main)
+
+dappc/library/				- Library compiler for various languages
+dappc/library/py.py
+dappc/library/js.py
+dappc/library/ml.py
+dappc/library/common.py		- Common utilities for library compiler
+
+dappc/core/py.py			- Dappc compiler for python language (with meta)
+dappc/core/ml.py			- Dappc compiler for ocaml language (with meta)
+dappc/core/js.py			- Dappc compiler for nodejs language (with meta)
+dappc/core/common.py		- Common interface for dappc
+
+"""
+
 import sys
 import os
 import inspect
@@ -211,7 +231,7 @@ class DappCompiler ():
 			if ('validate' in self.dappsrc.QUERIES[query]):
 				base += [ '\t\trpcmethods["'+query+'Validate"] = { "call": self.method_'+query+'Validate }\n' ]
 
-		base += [ '\n\t\tsuper (HelloWorldAPI, self).__init__(core, dht, rpcmethods, {})\n\n' ]
+		base += [ '\n\t\tsuper ('+self.NAME+'API, self).__init__(core, dht, rpcmethods, {})\n\n' ]
 
 
 		# Methods
@@ -290,7 +310,7 @@ class DappCompiler ():
 		base = [
 			'class ' + self.NAME + 'CoreWrapper (dapp.Core):\n',
 			'\tdef __init__ (self, chain, database):\n',
-			'\t\tsuper (' + self.NAME + 'CoreWrapperCore, self).__init__ (chain, database)\n\n',
+			'\t\tsuper (' + self.NAME + 'CoreWrapper, self).__init__ (chain, database)\n\n',
 			'\tdef compileCore (self, message):\n',
 			'\t\tc = core.' + self.NAME + 'Core()\n',
 			'\t\tc.state = database.State (self.database)\n',
@@ -362,7 +382,7 @@ class DappCompiler ():
 			'from contractvmd.proto import Protocol\n',
 			'from contractvmd.chain.message import Message\n',
 			'from . import core\n\n',
-			'logger = logging.getLogger(config.APP_self.NAME)\n\n'
+			'logger = logging.getLogger(config.APP_NAME)\n\n'
 		]
 
 		self.wrapper = header + ['\n\n'] + protocol + ['\n\n'] + message + ['\n\n'] + corewrap + ['\n\n'] + api + ['\n\n'] + main
